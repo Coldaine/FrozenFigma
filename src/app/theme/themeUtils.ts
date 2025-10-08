@@ -5,7 +5,7 @@
  * including validation, transformation, and application of tokens to the DOM.
  */
 
-import { TokenSet, EnhancedTokenSet, SemanticColorTokens, SemanticSpacingTokens, SemanticTypographyTokens, SemanticRadiusTokens, SemanticShadowTokens, SemanticTransitionTokens } from '../../schema';
+import { TokenSet, EnhancedTokenSet } from '../../schema';
 
 // ============================================================================
 // TOKEN VALIDATION UTILITIES
