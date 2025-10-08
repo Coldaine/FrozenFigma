@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../../state/store';
-import { exportAll, exportGraph, exportTokens, ExportOptions } from '../../../io/export';
+import { exportAll, exportGraph, ExportOptions } from '../../../io/export';
 import { saveUI } from '../../../io/persistence';
 import { captureScreenshot } from '../../../io/artifacts';
 
@@ -14,7 +14,7 @@ interface ExportDialogProps {
 }
 
 const ExportDialog: React.FC<ExportDialogProps> = ({ isOpen, onClose }) => {
-  const { graph, actions, selectors } = useStore();
+  const { graph } = useStore();
   const [exportFormat, setExportFormat] = useState<'tsx' | 'jsx' | 'vue' | 'svelte'>('tsx');
   const [includeTokens, setIncludeTokens] = useState(true);
   const [includeStyles, setIncludeStyles] = useState(true);

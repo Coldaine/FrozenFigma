@@ -220,7 +220,7 @@ export function runLint(graph: Graph): { passed: boolean; diagnostics: Diagnosti
  * @param filePaths - Optional list of file paths to lint (defaults to all src files)
  * @returns ESLint results
  */
-export async function runESLint(filePaths?: string[]): Promise<{ passed: boolean; diagnostics: Diagnostic[] }> {
+export async function runESLint(_filePaths?: string[]): Promise<{ passed: boolean; diagnostics: Diagnostic[] }> {
   // In a real implementation, this would run ESLint programmatically
   // For now, we'll return an empty result as a placeholder
   const diagnostics: Diagnostic[] = [];

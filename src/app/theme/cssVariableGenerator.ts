@@ -476,7 +476,7 @@ function validateCategoryNames(
   prefix: string,
   errors: string[]
 ): void {
-  for (const [key, value] of Object.entries(tokens)) {
+  for (const [key, _value] of Object.entries(tokens)) {
     // Check if the key is a valid CSS identifier
     if (!isValidCSSIdentifier(key)) {
       errors.push(`Invalid token key "${key}" in category "${category}" - must be a valid CSS identifier`);

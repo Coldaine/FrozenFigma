@@ -1,18 +1,11 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { Graph, createEmptyGraph, createComponent, ComponentType } from '../schema';
-import { attemptRepair, repairLoop, executeRepairWithTransaction, getEnhancedRepairer, ErrorType, RollbackResult, TransactionManager } from '../agent/repair';
+import { describe, it, expect } from 'vitest';
+import { Graph, createEmptyGraph, createComponent } from '../schema';
+import { attemptRepair, repairLoop, executeRepairWithTransaction, getEnhancedRepairer } from '../agent/repair';
 import { runValidationGate, Diagnostic } from '../agent/validator';
 
 describe('Enhanced Repair System', () => {
   describe('Error Classification', () => {
     it('should classify duplicate ID errors correctly', async () => {
-      const repairer = getEnhancedRepairer();
-      const diagnostic: Diagnostic = {
-        gate: 'schema',
-        severity: 'error',
-        message: 'Duplicate component ID: abc123',
-      };
-      
       // Since we can't directly access the classifier, we'll test through the repair process
       const graph = createEmptyGraph();
       const duplicateId = '123e4567-e89b-12d3-a456-42614174000'; // Valid UUID
@@ -274,9 +267,6 @@ describe('Enhanced Repair System', () => {
       });
       const transactionManager = repairer.getTransactionManager();
       
-      // Create a transaction
-      const transaction = transactionManager.createTransaction(graph, 'Test transaction');
-      
       // Modify the graph
       const modifiedGraph = JSON.parse(JSON.stringify(graph));
       modifiedGraph.nodes[0].props.text = 'Modified Button';
@@ -302,7 +292,7 @@ describe('Enhanced Repair System', () => {
       graph.nodes.push(node);
       
       // Create a validation function that always fails
-      const failingValidate = (g: Graph): Diagnostic[] => {
+      const failingValidate = (_g: Graph): Diagnostic[] => {
         return [{
           gate: 'schema',
           severity: 'error',

@@ -8,7 +8,6 @@
 
 import { TokenSet } from '../../schema';
 import { getThemeManager } from '../../app/theme/themeManager';
-import { tokensToCSSVariables } from '../../app/theme/themeUtils';
 
 // ============================================================================
 // TOKEN-AWARE SKELETON GENERATION
@@ -57,7 +56,7 @@ export interface SkeletonItem {
  * @returns Array of skeleton items
  */
 export function generateTokenAwareSkeleton(options?: SkeletonGenerationOptions): SkeletonItem[] {
-  const opts: Required<SkeletonGenerationOptions> = {
+  const opts = {
     count: options?.count || 3,
     type: options?.type || 'card',
     className: options?.className || '',
@@ -122,11 +121,11 @@ export function generateTokenAwareSkeleton(options?: SkeletonGenerationOptions):
 function generateCardSkeleton(
   id: string,
   index: number,
-  options: Required<SkeletonGenerationOptions>,
+  options: SkeletonGenerationOptions,
   tokens: TokenSet | null
 ): SkeletonItem {
   // Calculate animation delay
-  const delay = index * options.animationDelay;
+  const delay = index * (options.animationDelay || 200);
   
   // Create base card element
   const card: SkeletonItem = {
@@ -134,7 +133,7 @@ function generateCardSkeleton(
     elementType: 'div',
     className: `skeleton-card ${options.className}`,
     style: {
-      animationDuration: `${options.animationDuration}ms`,
+      animationDuration: `${options.animationDuration || 1000}ms`,
       animationDelay: `${delay}ms`,
       borderRadius: tokens?.radius?.md ? `${tokens.radius.md}px` : '6px',
       backgroundColor: tokens?.colors?.['bg-surface'] || '#f8fafc',
@@ -219,11 +218,11 @@ function generateCardSkeleton(
 function generateListSkeleton(
   id: string,
   index: number,
-  options: Required<SkeletonGenerationOptions>,
+  options: SkeletonGenerationOptions,
   tokens: TokenSet | null
 ): SkeletonItem {
   // Calculate animation delay
-  const delay = index * options.animationDelay;
+  const delay = index * (options.animationDelay || 200);
   
   // Create list container
   const list: SkeletonItem = {
@@ -231,7 +230,7 @@ function generateListSkeleton(
     elementType: 'div',
     className: `skeleton-list ${options.className}`,
     style: {
-      animationDuration: `${options.animationDuration}ms`,
+      animationDuration: `${options.animationDuration || 1000}ms`,
       animationDelay: `${delay}ms`,
     },
     children: [],
@@ -316,11 +315,11 @@ function generateListSkeleton(
 function generateTableSkeleton(
   id: string,
   index: number,
-  options: Required<SkeletonGenerationOptions>,
+  options: SkeletonGenerationOptions,
   tokens: TokenSet | null
 ): SkeletonItem {
   // Calculate animation delay
-  const delay = index * options.animationDelay;
+  const delay = index * (options.animationDelay || 200);
   
   // Create table container
   const table: SkeletonItem = {
@@ -328,7 +327,7 @@ function generateTableSkeleton(
     elementType: 'div',
     className: `skeleton-table ${options.className}`,
     style: {
-      animationDuration: `${options.animationDuration}ms`,
+      animationDuration: `${options.animationDuration || 1000}ms`,
       animationDelay: `${delay}ms`,
       border: tokens?.colors?.['border-base'] ? `1px solid ${tokens.colors['border-base']}` : '1px solid #e2e8f0',
       borderRadius: tokens?.radius?.md ? `${tokens.radius.md}px` : '6px',
@@ -495,11 +494,11 @@ function generateTableSkeleton(
 function generateFormSkeleton(
   id: string,
   index: number,
-  options: Required<SkeletonGenerationOptions>,
+  options: SkeletonGenerationOptions,
   tokens: TokenSet | null
 ): SkeletonItem {
   // Calculate animation delay
-  const delay = index * options.animationDelay;
+  const delay = index * (options.animationDelay || 200);
   
   // Create form container
   const form: SkeletonItem = {
@@ -507,7 +506,7 @@ function generateFormSkeleton(
     elementType: 'div',
     className: `skeleton-form ${options.className}`,
     style: {
-      animationDuration: `${options.animationDuration}ms`,
+      animationDuration: `${options.animationDuration || 1000}ms`,
       animationDelay: `${delay}ms`,
       padding: tokens?.spacing?.md ? `${tokens.spacing.md}px` : '16px',
     },
@@ -586,11 +585,11 @@ function generateFormSkeleton(
 function generateImageSkeleton(
   id: string,
   index: number,
-  options: Required<SkeletonGenerationOptions>,
+  options: SkeletonGenerationOptions,
   tokens: TokenSet | null
 ): SkeletonItem {
   // Calculate animation delay
-  const delay = index * options.animationDelay;
+  const delay = index * (options.animationDelay || 200);
   
   // Create image container
   const image: SkeletonItem = {
@@ -598,7 +597,7 @@ function generateImageSkeleton(
     elementType: 'div',
     className: `skeleton-image-container ${options.className}`,
     style: {
-      animationDuration: `${options.animationDuration}ms`,
+      animationDuration: `${options.animationDuration || 1000}ms`,
       animationDelay: `${delay}ms`,
       width: '100%',
       height: '200px',
@@ -638,11 +637,11 @@ function generateImageSkeleton(
 function generateTextSkeleton(
   id: string,
   index: number,
-  options: Required<SkeletonGenerationOptions>,
+  options: SkeletonGenerationOptions,
   tokens: TokenSet | null
 ): SkeletonItem {
   // Calculate animation delay
-  const delay = index * options.animationDelay;
+  const delay = index * (options.animationDelay || 200);
   
   // Create text container
   const text: SkeletonItem = {
@@ -650,7 +649,7 @@ function generateTextSkeleton(
     elementType: 'div',
     className: `skeleton-text-container ${options.className}`,
     style: {
-      animationDuration: `${options.animationDuration}ms`,
+      animationDuration: `${options.animationDuration || 1000}ms`,
       animationDelay: `${delay}ms`,
       padding: tokens?.spacing?.md ? `${tokens.spacing.md}px` : '16px',
     },

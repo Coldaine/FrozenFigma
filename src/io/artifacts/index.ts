@@ -1,5 +1,5 @@
 import { Graph } from '../../schema';
-import { getFileManager, safeSaveFile, safeLoadFile, createUniqueFileName } from '../utils/fileManager';
+import { getFileManager, createUniqueFileName } from '../utils/fileManager';
 
 // ============================================================================
 // ARTIFACT TYPES & INTERFACES
@@ -53,7 +53,7 @@ export interface Artifact {
  * @param quality - Quality of the screenshot (0-1, default: 0.8)
  * @returns Promise that resolves to the screenshot as a data URL
  */
-export async function captureScreenshot(element?: HTMLElement, quality: number = 0.8): Promise<string> {
+export async function captureScreenshot(element?: HTMLElement, _quality: number = 0.8): Promise<string> {
   try {
     // In a browser environment, we'll use html2canvas or similar library
     // For now, we'll simulate the screenshot capture

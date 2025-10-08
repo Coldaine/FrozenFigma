@@ -5,9 +5,9 @@
  * through commands, with validation and history tracking.
  */
 
-import { TokenSet, Command, SetTokensCommand } from '../schema';
-import { validateTokens, tokensToCSSVariables } from '../app/theme/themeUtils';
-import { getThemeManager, getCurrentTheme, getEffectiveTheme, applyTheme, switchToSystemTheme, toggleTheme, isDarkTheme } from '../app/theme/themeManager';
+import { TokenSet, SetTokensCommand } from '../schema';
+import { validateTokens } from '../app/theme/themeUtils';
+import { getThemeManager } from '../app/theme/themeManager';
 import { createSetTokensCommand } from '../schema';
 
 // ============================================================================

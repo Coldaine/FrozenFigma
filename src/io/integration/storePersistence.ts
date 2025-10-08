@@ -1,6 +1,6 @@
-import { Graph, createEmptyGraph } from '../../schema';
+import { createEmptyGraph } from '../../schema';
 import { FrozenFigmaStore } from '../../app/state/store';
-import { saveUI, loadUI, createCheckpoint, restoreFromCheckpoint, logSessionEntry, SessionLogEntry } from '../persistence';
+import { saveUI, loadUI, createCheckpoint, restoreFromCheckpoint, logSessionEntry } from '../persistence';
 import { saveArtifact, logTurn } from '../artifacts';
 import { createProjectStructure } from '../utils/fileManager';
 
@@ -268,7 +268,7 @@ export class StorePersistence {
   /**
    * Handles save errors, potentially attempting recovery.
    */
-  private async handleSaveError(error: any, path?: string): Promise<void> {
+  private async handleSaveError(error: any, _path?: string): Promise<void> {
     if (this.options.enableRecovery) {
       console.log('Attempting recovery from save error...');
       // In a real implementation, we might try to save to a backup location
@@ -283,7 +283,7 @@ export class StorePersistence {
   /**
    * Handles load errors, potentially attempting recovery.
    */
- private async handleLoadError(error: any, path?: string): Promise<void> {
+ private async handleLoadError(error: any, _path?: string): Promise<void> {
     if (this.options.enableRecovery) {
       console.log('Attempting recovery from load error...');
       

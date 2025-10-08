@@ -1,7 +1,7 @@
-import { Graph, Command, EditPlan } from '../schema';
+import { Graph } from '../schema';
 import { parseIntent } from './planner';
 import { applyPatch } from './patcher';
-import { attemptRepair, RepairResult, executeRepairWithTransaction, RepairConfig, DEFAULT_REPAIR_CONFIG } from './repair';
+import { RepairResult, executeRepairWithTransaction, DEFAULT_REPAIR_CONFIG } from './repair';
 import { runValidationGate, ValidationGateResult, Diagnostic } from './validator';
 
 /**
@@ -128,7 +128,6 @@ export class AgentOrchestrator {
       let repairedGraph = patchResult.graph;
       let repairAttempt = 0;
       let repairSuccess = false;
-      let repairFixes: string[] = [];
       
       while (repairAttempt < repairConfig.maxRepairAttempts && !repairSuccess) {
         repairAttempt++;
@@ -158,7 +157,6 @@ export class AgentOrchestrator {
           if (revalidationResult.passed) {
             repairedGraph = repairResult.graph;
             repairSuccess = true;
-            repairFixes = repairResult.fixes;
             this.repairMetrics.successfulRepairs++;
             
             if (this.config.verbose) {
@@ -168,7 +166,6 @@ export class AgentOrchestrator {
           } else {
             // If revalidation still fails, use the repaired graph anyway but log diagnostics
             repairedGraph = repairResult.graph;
-            repairFixes = repairResult.fixes;
             this.repairMetrics.successfulRepairs++; // Count as successful repair even if validation still fails
             
             if (this.config.verbose) {

@@ -5,7 +5,7 @@
  * including validation, transformation, and application of tokens to the DOM.
  */
 
-import { TokenSet, EnhancedTokenSet, SemanticColorTokens, SemanticSpacingTokens, SemanticTypographyTokens, SemanticRadiusTokens, SemanticShadowTokens, SemanticTransitionTokens } from '../../schema';
+import { TokenSet, EnhancedTokenSet } from '../schema';
 
 // ============================================================================
 // TOKEN VALIDATION UTILITIES
@@ -847,7 +847,7 @@ export function createDarkThemeTokens(): TokenSet {
       'primary-200': '#bfdbfe',
       'primary-300': '#93c5fd',
       'primary-400': '#60a5fa',
-      'primary-50': '#3b82f6',
+      'primary-500': '#3b82f6',
       'primary-600': '#2563eb',
       'primary-700': '#1d4ed8',
       'primary-800': '#1e40af',

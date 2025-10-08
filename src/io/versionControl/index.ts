@@ -1,6 +1,6 @@
 import { Graph } from '../../schema';
 import { generateDiff } from '../artifacts';
-import { saveArtifact, loadArtifact, listArtifacts, deleteArtifact } from '../artifacts';
+import { saveArtifact, loadArtifact, listArtifacts } from '../artifacts';
 import { getFileManager } from '../utils/fileManager';
 
 // ============================================================================

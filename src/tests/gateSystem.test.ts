@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createEmptyGraph, createComponent, ComponentType } from '../schema';
+import { createEmptyGraph, createComponent } from '../schema';
 import { runValidationGate } from '../agent/validator';
 import { runLint } from '../agent/validator/lint';
 import { runTypeCheck } from '../agent/validator/types';

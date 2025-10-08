@@ -1,4 +1,4 @@
-import { Graph, ComponentSpec, ComponentType } from '../../schema';
+import { Graph, ComponentType } from '../../schema';
 import { Diagnostic } from '.';
 import { runValidationGate } from '.';
 import { createTestGraph, MockFactory, InteractionSimulator } from '../../tests/testUtils';
@@ -79,7 +79,7 @@ async function runSchemaUnitTests(): Promise<Diagnostic[]> {
 
     // Test createComponent
     try {
-      const { createComponent, ComponentTypeSchema } = await import('../../schema');
+      const { createComponent } = await import('../../schema');
       const validTypes: ComponentType[] = ['button', 'slider', 'toggle', 'card', 'input'];
       
       for (const type of validTypes) {
@@ -134,7 +134,7 @@ async function runSchemaUnitTests(): Promise<Diagnostic[]> {
 /**
  * Run unit tests for UI components.
  */
-async function runUIComponentUnitTests(graph: Graph): Promise<Diagnostic[]> {
+async function runUIComponentUnitTests(_graph: Graph): Promise<Diagnostic[]> {
   const diagnostics: Diagnostic[] = [];
 
   try {
@@ -301,7 +301,7 @@ async function runUtilityUnitTests(): Promise<Diagnostic[]> {
  * @param filePaths - Optional list of file paths to run tests on (defaults to all test files)
  * @returns Vitest results
  */
-export async function runVitest(filePaths?: string[]): Promise<{ passed: boolean; diagnostics: Diagnostic[] }> {
+export async function runVitest(_filePaths?: string[]): Promise<{ passed: boolean; diagnostics: Diagnostic[] }> {
   // In a real implementation, this would run Vitest programmatically
   // For now, we'll return an empty result as a placeholder
   const diagnostics: Diagnostic[] = [];

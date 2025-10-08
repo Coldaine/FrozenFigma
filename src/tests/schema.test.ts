@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   ComponentSpecSchema,
-  GraphSchema,
   CommandSchema,
   EditPlanSchema,
   TokenSetSchema,
@@ -10,9 +9,6 @@ import {
   createComponent,
   createAddCommand,
   createUpdateCommand,
-  createRemoveCommand,
-  createMoveCommand,
-  createSetTokensCommand,
   createEditPlan,
   findComponentById,
   generateId,

@@ -265,7 +265,6 @@ export function generateTabs(params: SkeletonParams & {
     x = 100,
     y = 100,
     labels = ['General', 'Display', 'Network'],
-    tabContent = [],
     includeInputs = true,
     includeButtons = true,
   } = params;
@@ -852,7 +851,6 @@ export function generateCardGrid(params: SkeletonParams & {
     const cardY = y + row * (cardHeight + gap);
 
     // Card container
-    const cardId = generateId();
     components.push(createComponent(
       'card',
       {
@@ -2259,7 +2257,6 @@ export function generateFeedback(params: SkeletonParams & {
     y = 100,
     feedbackType = 'notification',
     message = 'This is a feedback message',
-    duration = 5000,
     includeActions = true,
   } = params;
 
@@ -2475,7 +2472,6 @@ export function generateLayout(params: SkeletonParams & {
   if (layoutType === 'container') {
     // Main container layout
     const containerWidth = 1200;
-    const containerHeight = 800;
     let currentY = y;
 
     // Header

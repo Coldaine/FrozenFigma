@@ -317,7 +317,7 @@ describe('Theme Switching', () => {
 
   it('should toggle theme using global function', () => {
     const initialIsDark = isDarkTheme();
-    const newTheme = toggleTheme();
+    toggleTheme();
     expect(isDarkTheme()).toBe(!initialIsDark);
   });
 });

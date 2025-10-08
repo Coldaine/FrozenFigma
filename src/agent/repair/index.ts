@@ -347,7 +347,6 @@ class RepairStrategyLibrary {
         const match = diagnostic.message.match(/Missing dependency: (.+) for component (.+)/);
         if (match) {
           const dependencyId = match[1];
-          const componentId = match[2];
           
           // Create a placeholder component
           const placeholder = {
@@ -973,7 +972,7 @@ const enhancedRepairer = new EnhancedRepairer();
 export function attemptRepair(
   graph: Graph, 
   diagnostics: Diagnostic[],
-  maxAttempts: number = 3
+  _maxAttempts: number = 3
 ): RepairResult {
   return enhancedRepairer.attemptRepair(graph, diagnostics);
 }

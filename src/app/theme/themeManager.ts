@@ -7,7 +7,7 @@
 
 import { TokenSet } from '../../schema';
 import { applyTokensToDOM, tokensToCSSVariables } from './themeUtils';
-import { ThemePreset, getThemePreset, getDefaultThemePreset } from './themePresets';
+import { ThemePreset, getThemePreset } from './themePresets';
 
 // ============================================================================
 // THEME MANAGER
@@ -397,4 +397,13 @@ export function toggleTheme(): ThemePreset {
  */
 export function isDarkTheme(): boolean {
   return getThemeManager().isDarkTheme();
+}
+
+/**
+ * Gets the current theme's tokens
+ * 
+ * @returns The current theme's token set
+ */
+export function getCurrentTokens(): TokenSet | null {
+  return getThemeManager().getCurrentTokens();
 }
