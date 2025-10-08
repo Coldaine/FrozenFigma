@@ -6,10 +6,11 @@
  * styling rules.
  */
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TokenSet } from '../../schema';
 import { tokensToStyles, ComponentTypeForStyle, StyleConversionOptions } from './tokenToStyleConverter';
-import { getThemeManager, getCurrentTokens } from './themeManager';
+import { getThemeManager } from './themeManager';
+import { getCurrentTokens } from './themeUtils';
 
 // ============================================================================
 // TOKEN-BASED COMPONENT STYLING SYSTEM
@@ -329,10 +330,6 @@ export function withTokenStyles<T extends Record<string, any>>(
     return <Component {...props} style={{ ...props.style, ...styles }} />;
   };
 }
-
-// Note: Need to import React at the top of the file
-// Since this is a TypeScript file that will be used in a React context
-import React from 'react';
 
 /**
  * Context provider for token-based styling

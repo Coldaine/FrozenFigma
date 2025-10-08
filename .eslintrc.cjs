@@ -7,7 +7,7 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    '@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
     'plugin:react/jsx-runtime',
     'plugin:react-hooks/recommended',
@@ -33,6 +33,12 @@ module.exports = {
     ],
     'react/prop-types': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/ban-ts-comment': 'warn',
+    'no-case-declarations': 'warn',
+    'prefer-const': 'warn',
+    'react/no-unescaped-entities': 'warn',
+    '@typescript-eslint/no-var-requires': 'warn',
   },
   settings: {
     react: {
