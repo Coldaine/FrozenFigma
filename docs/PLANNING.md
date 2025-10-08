@@ -1,23 +1,9 @@
-# Technical Plan: Local Functional Mock-Up Builder
+# PLANNING (MOVED)
 
----
+This file has been moved into `docs/architecture.md` to keep the canonical plan in the docs folder.
 
-## 1. Vision & Scope
+If you want the original full planning document it is archived at `docs/PLANNING-ARCHIVE-2025-10-07.md`.
 
-**One-Sentence Goal:** A local, self-hosted environment that turns natural-language requests into **functional UI mock-ups** (clickable, stateful controls—no production backend), with guard-railed edit/apply cycles, tests/linters, auto-repair, and rollback.
-
-### 1.1. Detailed Vision
-
-The system is a local, self-hosted, "Figma Make"-equivalent environment that generates and renders functional mock-ups of application user interfaces from natural-language instructions.
-
-A **functional mock-up** means:
-- Components are interactive (buttons, sliders, tabs, modals, etc. respond visually and statefully).
-- No production backend or real data logic is required.
-- Behavior simulates plausible UI interactivity within the mock-up runtime.
-
-The primary goal is to replicate the text-to-UI experience locally, with full control, no subscription, and complete agent transparency.
-
----
 
 ## 2. System Overview & Core Requirements
 
