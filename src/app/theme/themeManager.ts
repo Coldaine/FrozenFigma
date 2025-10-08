@@ -398,3 +398,12 @@ export function toggleTheme(): ThemePreset {
 export function isDarkTheme(): boolean {
   return getThemeManager().isDarkTheme();
 }
+
+/**
+ * Gets the current tokens from the global theme manager
+ * 
+ * @returns The current theme's token set
+ */
+export function getCurrentTokens(): TokenSet | null {
+  return getThemeManager().getCurrentTokens();
+}

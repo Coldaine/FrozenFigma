@@ -14,7 +14,6 @@ import {
   generateLayout,
   generateSkeleton
 } from '../agent/skeletons';
-import { ComponentSpec, ComponentType } from '../schema';
 
 describe('Skeleton Library', () => {
   describe('Settings Panel', () => {

@@ -57,15 +57,15 @@ export interface SkeletonItem {
  * @returns Array of skeleton items
  */
 export function generateTokenAwareSkeleton(options?: SkeletonGenerationOptions): SkeletonItem[] {
-  const opts: Required<SkeletonGenerationOptions> = {
+  const opts = {
     count: options?.count || 3,
-    type: options?.type || 'card',
+    type: options?.type || 'card' as const,
     className: options?.className || '',
     useTokens: options?.useTokens !== false,
     customTokens: options?.customTokens,
     animationDuration: options?.animationDuration || 1000,
     animationDelay: options?.animationDelay || 200,
-  };
+  } as Required<SkeletonGenerationOptions>;
   
   // Get tokens to use
   let tokens: TokenSet | null = null;

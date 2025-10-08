@@ -9,8 +9,7 @@
 import React, { useState, useEffect } from 'react';
 import { TokenSet } from '../../schema';
 import { tokensToStyles, ComponentTypeForStyle, StyleConversionOptions } from './tokenToStyleConverter';
-import { getThemeManager } from './themeManager';
-import { getCurrentTokens } from './themeUtils';
+import { getThemeManager, getCurrentTokens } from './themeManager';
 
 // ============================================================================
 // TOKEN-BASED COMPONENT STYLING SYSTEM
@@ -93,11 +92,11 @@ function getDefaultTokens(): TokenSet {
     colors: {
       primary: '#3b82f6',
       'primary-50': '#eff6ff',
-      'primary-10': '#dbeafe',
+      'primary-100': '#dbeafe',
       'primary-200': '#bfdbfe',
       'primary-300': '#93c5fd',
-      'primary-40': '#60a5fa',
-      'primary-50': '#3b82f6',
+      'primary-400': '#60a5fa',
+      'primary-500': '#3b82f6',
       'primary-600': '#2563eb',
       'primary-700': '#1d4ed8',
       'primary-800': '#1e40af',

@@ -39,6 +39,7 @@ module.exports = {
     'prefer-const': 'warn',
     'react/no-unescaped-entities': 'warn',
     '@typescript-eslint/no-var-requires': 'warn',
+    'react-hooks/rules-of-hooks': 'warn',
   },
   settings: {
     react: {

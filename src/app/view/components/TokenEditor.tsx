@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { TokenSet } from '../../../schema';
-import { getThemeManager, getCurrentTheme, getEffectiveTheme, applyTheme, switchToSystemTheme, toggleTheme, isDarkTheme } from '../../theme/themeManager';
+import { getThemeManager } from '../../theme/themeManager';
 import { tokensToCSSVariables, createDefaultTokens as createDefaultTokensUtil } from '../../theme/themeUtils';
 
 // ============================================================================
