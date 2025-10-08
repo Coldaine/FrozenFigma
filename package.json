@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "md:lint": "markdownlint \"docs/**/*.md\" -c .markdownlint.json || true",
+    "md:lint:ci": "markdownlint \"docs/**/*.md\" -c .markdownlint-ci.json",
+    "prepare": "husky install",
     "types": "tsc --noEmit",
     "test": "vitest run",
     "smoke": "vitest run tests/smoke.test.tsx",
@@ -39,6 +42,21 @@
     "prettier": "^3.0.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
-    "vitest": "^0.34.0"
+    "vitest": "^0.34.0",
+    "markdownlint": "^0.27.0",
+    "markdownlint-cli": "^0.35.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^14.0.0"
+  }
+  ,
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --cache --fix",
+      "git add"
+    ],
+    "*.md": [
+      "npm run md:lint",
+      "git add"
+    ]
   }
 }

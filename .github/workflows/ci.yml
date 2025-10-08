@@ -38,6 +38,10 @@ jobs:
         run: |
           npm install --no-audit --no-fund
 
+      - name: Lint docs (CI rules)
+        run: |
+          npm run md:lint:ci
+
       - name: Run validation gate
         run: |
           npm run gate
