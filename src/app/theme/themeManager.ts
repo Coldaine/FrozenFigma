@@ -7,7 +7,7 @@
 
 import { TokenSet } from '../../schema';
 import { applyTokensToDOM, tokensToCSSVariables } from './themeUtils';
-import { ThemePreset, getThemePreset, getDefaultThemePreset } from './themePresets';
+import { ThemePreset, getThemePreset } from './themePresets';
 
 // ============================================================================
 // THEME MANAGER
