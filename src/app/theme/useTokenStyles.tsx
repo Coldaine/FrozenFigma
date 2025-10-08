@@ -6,10 +6,10 @@
  * styling rules.
  */
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TokenSet } from '../../schema';
 import { tokensToStyles, ComponentTypeForStyle, StyleConversionOptions } from './tokenToStyleConverter';
-import { getThemeManager, getCurrentTokens } from './themeManager';
+import { getCurrentTokens } from './themeManager';
 
 // ============================================================================
 // TOKEN-BASED COMPONENT STYLING SYSTEM
@@ -51,17 +51,6 @@ export function useTokenStyles(
   
   useEffect(() => {
     if (opts.subscribeToThemeChanges) {
-      // Create a listener for theme changes
-      const updateStyles = () => {
-        const tokens = getCurrentTokens();
-        if (tokens) {
-          setStyles(tokensToStyles(tokens, opts));
-        }
-      };
-      
-      // Set up theme manager to call our update function when theme changes
-      const themeManager = getThemeManager();
-      
       // For now, we'll use a simple interval to check for changes
       // In a real implementation, we'd have a proper event system
       const interval = setInterval(() => {
@@ -96,7 +85,6 @@ function getDefaultTokens(): TokenSet {
       'primary-200': '#bfdbfe',
       'primary-300': '#93c5fd',
       'primary-40': '#60a5fa',
-      'primary-50': '#3b82f6',
       'primary-600': '#2563eb',
       'primary-700': '#1d4ed8',
       'primary-800': '#1e40af',
@@ -330,10 +318,6 @@ export function withTokenStyles<T extends Record<string, any>>(
   };
 }
 
-// Note: Need to import React at the top of the file
-// Since this is a TypeScript file that will be used in a React context
-import React from 'react';
-
 /**
  * Context provider for token-based styling
  */
@@ -409,7 +393,7 @@ export function useConditionalTokenStyles(
  */
 export function useResponsiveTokenStyles(
   baseComponentType: ComponentTypeForStyle,
-  responsiveRules: {
+  _responsiveRules: {
     sm?: ComponentTypeForStyle;
     md?: ComponentTypeForStyle;
     lg?: ComponentTypeForStyle;
