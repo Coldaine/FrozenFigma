@@ -347,7 +347,6 @@ class RepairStrategyLibrary {
         const match = diagnostic.message.match(/Missing dependency: (.+) for component (.+)/);
         if (match) {
           const dependencyId = match[1];
-          const componentId = match[2];
           
           // Create a placeholder component
           const placeholder = {
@@ -815,7 +814,7 @@ class EnhancedRepairer {
     let currentGraph = graph;
     let currentDiagnostics = diagnostics;
     let attempt = 0;
-    let allFixes: string[] = [];
+    const allFixes: string[] = [];
     
     while (attempt < maxAttempts) {
       attempt++;
@@ -918,7 +917,7 @@ class EnhancedRepairer {
     }
     
     let currentGraph = graph;
-    let appliedFixes: string[] = [];
+    const appliedFixes: string[] = [];
     let rollbackSteps = 0;
     
     for (let i = 0; i < steps; i++) {
@@ -973,7 +972,7 @@ const enhancedRepairer = new EnhancedRepairer();
 export function attemptRepair(
   graph: Graph, 
   diagnostics: Diagnostic[],
-  maxAttempts: number = 3
+  _maxAttempts: number = 3
 ): RepairResult {
   return enhancedRepairer.attemptRepair(graph, diagnostics);
 }

@@ -1,4 +1,4 @@
-import { Graph, Command } from '../../schema';
+import { Graph } from '../../schema';
 import { ValidationGateResult } from '../validator';
 import { RepairResult } from '../repair';
 import { PatchResult } from '../patcher';

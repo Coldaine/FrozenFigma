@@ -8,7 +8,6 @@
 
 import { TokenSet } from '../../schema';
 import { getThemeManager } from '../../app/theme/themeManager';
-import { tokensToCSSVariables } from '../../app/theme/themeUtils';
 
 // ============================================================================
 // TOKEN-AWARE SKELETON GENERATION

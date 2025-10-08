@@ -296,7 +296,6 @@ function convertToYAML(obj: any, indentLevel: number, minify: boolean): string {
     }
     
     let output = '';
-    const indent = minify ? '' : '  '.repeat(indentLevel);
     const nextIndent = minify ? '' : '  '.repeat(indentLevel + 1);
     
     for (let i = 0; i < obj.length; i++) {
@@ -309,7 +308,6 @@ function convertToYAML(obj: any, indentLevel: number, minify: boolean): string {
   
   if (typeof obj === 'object') {
     let output = '';
-    const indent = minify ? '' : '  '.repeat(indentLevel);
     const nextIndent = minify ? '' : '  '.repeat(indentLevel + 1);
     const keys = Object.keys(obj);
     

@@ -1,7 +1,6 @@
 import React, { useState, useRef, ChangeEvent } from 'react';
 import { useStore } from '../../state/store';
-import { loadUI, createCheckpoint, restoreFromCheckpoint, getCheckpoints } from '../../../io/persistence';
-import { Checkpoint } from '../../../io/persistence';
+import { createCheckpoint, restoreFromCheckpoint } from '../../../io/persistence';
 
 // ============================================================================
 // FILE MENU COMPONENT
@@ -92,15 +91,6 @@ const FileMenu: React.FC<FileMenuProps> = ({ onOpenExportDialog }) => {
       setShowLoadMenu(false);
     } catch (error) {
       console.error(`Failed to load from checkpoint ${checkpointId}:`, error);
-    }
-  };
-
-  const loadCheckpoints = async (): Promise<Checkpoint[]> => {
-    try {
-      return await getCheckpoints();
-    } catch (error) {
-      console.error('Failed to load checkpoints:', error);
-      return [];
     }
   };
 

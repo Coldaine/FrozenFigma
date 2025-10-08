@@ -6,7 +6,6 @@
  */
 
 import { TokenSet, Command, SetTokensCommand } from '../../schema';
-import { getThemeManager } from './themeManager';
 import { validateTokens } from './themeUtils';
 
 // ============================================================================

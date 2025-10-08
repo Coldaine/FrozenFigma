@@ -9,7 +9,7 @@
 import React, { useState, useEffect } from 'react';
 import { TokenSet } from '../../schema';
 import { tokensToStyles, ComponentTypeForStyle, StyleConversionOptions } from './tokenToStyleConverter';
-import { getThemeManager, getCurrentTokens } from './themeManager';
+import { getCurrentTokens } from './themeManager';
 
 // ============================================================================
 // TOKEN-BASED COMPONENT STYLING SYSTEM
@@ -51,17 +51,6 @@ export function useTokenStyles(
   
   useEffect(() => {
     if (opts.subscribeToThemeChanges) {
-      // Create a listener for theme changes
-      const updateStyles = () => {
-        const tokens = getCurrentTokens();
-        if (tokens) {
-          setStyles(tokensToStyles(tokens, opts));
-        }
-      };
-      
-      // Set up theme manager to call our update function when theme changes
-      const themeManager = getThemeManager();
-      
       // For now, we'll use a simple interval to check for changes
       // In a real implementation, we'd have a proper event system
       const interval = setInterval(() => {
@@ -405,7 +394,7 @@ export function useConditionalTokenStyles(
  */
 export function useResponsiveTokenStyles(
   baseComponentType: ComponentTypeForStyle,
-  responsiveRules: {
+  _responsiveRules: {
     sm?: ComponentTypeForStyle;
     md?: ComponentTypeForStyle;
     lg?: ComponentTypeForStyle;

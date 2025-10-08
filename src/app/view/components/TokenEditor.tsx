@@ -8,7 +8,6 @@
 import React, { useState, useEffect } from 'react';
 import { TokenSet } from '../../../schema';
 import { getThemeManager } from '../../theme/themeManager';
-import { tokensToCSSVariables, createDefaultTokens as createDefaultTokensUtil } from '../../theme/themeUtils';
 
 // ============================================================================
 // TOKEN EDITOR COMPONENT

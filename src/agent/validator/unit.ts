@@ -1,4 +1,4 @@
-import { Graph, ComponentSpec, ComponentType } from '../../schema';
+import { Graph, ComponentType } from '../../schema';
 import { Diagnostic } from '.';
 import { runValidationGate } from '.';
 import { createTestGraph, MockFactory, InteractionSimulator } from '../../tests/testUtils';
@@ -79,7 +79,7 @@ async function runSchemaUnitTests(): Promise<Diagnostic[]> {
 
     // Test createComponent
     try {
-      const { createComponent, ComponentTypeSchema } = await import('../../schema');
+      const { createComponent } = await import('../../schema');
       const validTypes: ComponentType[] = ['button', 'slider', 'toggle', 'card', 'input'];
       
       for (const type of validTypes) {

@@ -1,7 +1,6 @@
-import { Graph, ComponentSpec } from '../../schema';
+import { Graph } from '../../schema';
 import { Diagnostic } from '.';
 import { renderComponent } from '../../app/view/components/UIComponents';
-import { createTestGraph } from '../../tests/testUtils';
 
 /**
  * Run smoke tests to verify basic UI functionality.
@@ -243,7 +242,7 @@ function checkOverlap(a: { x: number; y: number; w: number; h: number }, b: { x:
  * @param graph - Graph to run browser tests on
  * @returns Browser test results
  */
-export async function runHeadlessBrowserTests(graph: Graph): Promise<{ passed: boolean; diagnostics: Diagnostic[] }> {
+export async function runHeadlessBrowserTests(_graph: Graph): Promise<{ passed: boolean; diagnostics: Diagnostic[] }> {
   // In a real implementation, this would run tests in a headless browser (like Puppeteer or Playwright)
   // For now, we'll return an empty result as a placeholder
   const diagnostics: Diagnostic[] = [];
