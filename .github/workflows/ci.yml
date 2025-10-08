@@ -1,0 +1,71 @@
+name: FrozenFigma CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: FrozenFigma-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate (lint, types, tests, smoke)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install --no-audit --no-fund
+
+      - name: Run validation gate
+        run: |
+          npm run gate
+
+      - name: Build
+        run: |
+          npm run build
+
+      - name: Upload coverage (if present)
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: coverage-${{ matrix.node-version }}
+          path: coverage
+          if-no-files-found: ignore
+
+  # Optional job to ensure the app can start (basic smoke start)
+  # Uncomment if you add a headless start script
+  # start-smoke:
+  #   name: Start Smoke
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20.x
+  #         cache: 'npm'
+  #     - run: npm install --no-audit --no-fund
+  #     - run: npm run dev -- --host
+  #       timeout-minutes: 5
+  #       continue-on-error: true
