@@ -6,7 +6,7 @@
  * styling rules.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { TokenSet } from '../../schema';
 import { tokensToStyles, ComponentTypeForStyle, StyleConversionOptions } from './tokenToStyleConverter';
 import { getCurrentTokens } from './themeManager';
@@ -34,14 +34,14 @@ export function useTokenStyles(
   componentType: ComponentTypeForStyle = 'generic',
   options?: UseTokenStylesOptions
 ): Record<string, any> {
-  const opts: Required<UseTokenStylesOptions> = {
+  const opts: Required<UseTokenStylesOptions> = useMemo(() => ({
     componentType,
     additionalStyles: options?.additionalStyles || {},
     includeResponsive: options?.includeResponsive !== false,
     breakpoints: options?.breakpoints || { sm: 640, md: 768, lg: 1024, xl: 1280 },
     variablePrefix: options?.variablePrefix || 'ff',
     subscribeToThemeChanges: options?.subscribeToThemeChanges !== false,
-  };
+  }), [componentType, options]);
   
   // Get initial tokens
  const initialTokens = getCurrentTokens() || getDefaultTokens();
@@ -66,7 +66,7 @@ export function useTokenStyles(
         clearInterval(interval);
       };
     }
-  }, [opts.componentType, opts.additionalStyles, opts.includeResponsive, opts.breakpoints, opts.variablePrefix]);
+  }, [opts]);
   
   return styles;
 }
@@ -371,11 +371,29 @@ export function useTokenValue(tokenPath: string, fallback?: string | number): st
 export function useConditionalTokenStyles(
   conditions: Array<{ condition: boolean; componentType: ComponentTypeForStyle; options?: StyleConversionOptions }>
 ): Record<string, any> {
+  // Get current tokens once at the top level (proper hook usage)
+  const [tokens, setTokens] = useState<TokenSet | null>(() => getCurrentTokens() || getDefaultTokens());
+  
+  // Subscribe to theme changes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const currentTokens = getCurrentTokens();
+      if (currentTokens) {
+        setTokens(currentTokens);
+      }
+    }, 1000); // Check every second for theme changes
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Build styles from conditions using pure converter (no hooks in loop)
   const allStyles: Record<string, any> = {};
+  const currentTokens = tokens || getDefaultTokens();
   
   for (const { condition, componentType, options } of conditions) {
     if (condition) {
-      const styles = useTokenStyles(componentType, options);
+      // Use pure tokensToStyles converter instead of hook
+      const styles = tokensToStyles(currentTokens, { componentType, ...options });
       Object.assign(allStyles, styles);
     }
   }
@@ -408,7 +426,7 @@ export function useResponsiveTokenStyles(
  // more sophisticated responsive handling
   const responsiveStyles: Record<string, any> = { ...baseStyles };
   
-  // In a real implementation, we'd add media query styles here
+  // In a real implementation, we'd add media query styles here based on _responsiveRules
   // For now, we'll just return the base styles
   return responsiveStyles;
 }
