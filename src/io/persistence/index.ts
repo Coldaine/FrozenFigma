@@ -1,5 +1,5 @@
 import { Graph, createEmptyGraph, validate, GraphSchema } from '../../schema';
-import { captureScreenshot, logTurn, generateDiff, saveArtifact } from '../artifacts';
+import { saveArtifact } from '../artifacts';
 
 // ============================================================================
 // TYPES & INTERFACES

@@ -1,9 +1,8 @@
-import { describe, it, expect, beforeEach, vi, MockedFunction } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Graph, ComponentSpec, createEmptyGraph, createComponent, FrameSchema } from '../schema';
 import { saveUI, loadUI, createCheckpoint, restoreFromCheckpoint } from '../io/persistence';
 import { generateTSX, generateTokens, exportComponent, exportAll } from '../io/export';
 import { captureScreenshot, logTurn, generateDiff } from '../io/artifacts';
-import { ComponentType } from '../schema';
 
 // Mock DOM APIs for Node environment
 Object.defineProperty(window, 'localStorage', {

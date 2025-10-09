@@ -19,7 +19,7 @@ export async function runUnitTests(graph: Graph): Promise<{ passed: boolean; dia
     diagnostics.push(...schemaTestDiagnostics);
 
     // Run unit tests for UI components
-    const uiComponentTestDiagnostics = await runUIComponentUnitTests(graph);
+    const uiComponentTestDiagnostics = await runUIComponentUnitTests();
     diagnostics.push(...uiComponentTestDiagnostics);
 
     // Run unit tests for agent modules
@@ -134,7 +134,7 @@ async function runSchemaUnitTests(): Promise<Diagnostic[]> {
 /**
  * Run unit tests for UI components.
  */
-async function runUIComponentUnitTests(graph: Graph): Promise<Diagnostic[]> {
+async function runUIComponentUnitTests(): Promise<Diagnostic[]> {
   const diagnostics: Diagnostic[] = [];
 
   try {
@@ -301,7 +301,7 @@ async function runUtilityUnitTests(): Promise<Diagnostic[]> {
  * @param filePaths - Optional list of file paths to run tests on (defaults to all test files)
  * @returns Vitest results
  */
-export async function runVitest(filePaths?: string[]): Promise<{ passed: boolean; diagnostics: Diagnostic[] }> {
+export async function runVitest(_filePaths?: string[]): Promise<{ passed: boolean; diagnostics: Diagnostic[] }> {
   // In a real implementation, this would run Vitest programmatically
   // For now, we'll return an empty result as a placeholder
   const diagnostics: Diagnostic[] = [];

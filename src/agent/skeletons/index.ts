@@ -2472,7 +2472,6 @@ export function generateLayout(params: SkeletonParams & {
   if (layoutType === 'container') {
     // Main container layout
     const containerWidth = 1200;
-    const containerHeight = 800;
     let currentY = y;
 
     // Header

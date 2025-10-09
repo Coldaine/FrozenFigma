@@ -37,7 +37,7 @@ export interface ExportResult {
  * @returns Generated TSX code as a string
  */
 export function generateTSX(component: ComponentSpec, tokens?: TokenSet): string {
-  const { type, props, frame } = component;
+  const { type, props } = component;
   
   // Generate component-specific TSX based on component type
   let componentCode = '';
@@ -124,7 +124,7 @@ export default ${componentName};
  * Generates a React TSX component for a button.
  */
 function generateButtonTSX(props: any, tokens?: TokenSet): string {
-  const { text = 'Button', variant = 'primary', size = 'md' } = props;
+  const { text = 'Button' } = props;
   
   // Apply tokens if available
   const style = tokens ? generateStyleFromTokens(tokens, 'button') : {};
@@ -141,7 +141,7 @@ function generateButtonTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for an input.
  */
-function generateInputTSX(props: any, tokens?: TokenSet): string {
+function generateInputTSX(props: any, _tokens?: TokenSet): string {
   const { label, placeholder, type = 'text', value } = props;
   
   return `<div className="input-container">
@@ -159,7 +159,7 @@ function generateInputTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a card.
  */
-function generateCardTSX(props: any, tokens?: TokenSet): string {
+function generateCardTSX(props: any, _tokens?: TokenSet): string {
   const { title, content, footer } = props;
   
   return `<div className="card">
@@ -174,7 +174,7 @@ function generateCardTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a card grid.
  */
-function generateCardGridTSX(props: any, tokens?: TokenSet): string {
+function generateCardGridTSX(_props: any, _tokens?: TokenSet): string {
   return `<div className="card-grid">
   {/* Map through card data if provided */}
   {props.cards?.map((card: any, index: number) => (
@@ -189,7 +189,7 @@ function generateCardGridTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a form.
  */
-function generateFormTSX(props: any, tokens?: TokenSet): string {
+function generateFormTSX(_props: any, _tokens?: TokenSet): string {
   return `<form className="form" onSubmit={props.onSubmit}>
   {/* Form fields would be generated based on props.fields */}
   {props.children}
@@ -202,7 +202,7 @@ function generateFormTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a slider.
  */
-function generateSliderTSX(props: any, tokens?: TokenSet): string {
+function generateSliderTSX(props: any, _tokens?: TokenSet): string {
   const { min = 0, max = 100, value = 50 } = props;
   
   return `<div className="slider-container">
@@ -221,7 +221,7 @@ function generateSliderTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a toggle.
  */
-function generateToggleTSX(props: any, tokens?: TokenSet): string {
+function generateToggleTSX(props: any, _tokens?: TokenSet): string {
   const { checked = false } = props;
   
   return `<div className="toggle-container">
@@ -238,7 +238,7 @@ function generateToggleTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for tabs.
  */
-function generateTabsTSX(props: any, tokens?: TokenSet): string {
+function generateTabsTSX(_props: any, _tokens?: TokenSet): string {
   return `<div className="tabs">
   <div className="tab-headers">
     {props.tabs?.map((tab: any, index: number) => (
@@ -260,7 +260,7 @@ function generateTabsTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a modal.
  */
-function generateModalTSX(props: any, tokens?: TokenSet): string {
+function generateModalTSX(_props: any, _tokens?: TokenSet): string {
   return `<div className={\`modal \${props.isOpen ? 'open' : 'closed'}\`}>
   <div className="modal-overlay" onClick={props.onClose}></div>
   <div className="modal-content">
@@ -281,7 +281,7 @@ function generateModalTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a tray.
  */
-function generateTrayTSX(props: any, tokens?: TokenSet): string {
+function generateTrayTSX(props: any, _tokens?: TokenSet): string {
   const position = props.position || 'right';
   
   return `<div className={\`tray tray-\${props.isOpen ? 'open' : 'closed'} tray-pos-\${'${position}'}\`}>
@@ -294,7 +294,7 @@ function generateTrayTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a select dropdown.
  */
-function generateSelectTSX(props: any, tokens?: TokenSet): string {
+function generateSelectTSX(_props: any, _tokens?: TokenSet): string {
   return `<select className="select" {...props}>
   {props.options?.map((option: any, index: number) => (
     <option key={index} value={option.value}>
@@ -307,7 +307,7 @@ function generateSelectTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a textarea.
  */
-function generateTextareaTSX(props: any, tokens?: TokenSet): string {
+function generateTextareaTSX(props: any, _tokens?: TokenSet): string {
   return `<textarea
   className="textarea"
   placeholder="${props.placeholder || ''}"
@@ -318,7 +318,7 @@ function generateTextareaTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a progress bar.
  */
-function generateProgressTSX(props: any, tokens?: TokenSet): string {
+function generateProgressTSX(props: any, _tokens?: TokenSet): string {
  const { value = 0, max = 100 } = props;
   
   return `<div className="progress-container">
@@ -333,7 +333,7 @@ function generateProgressTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a tooltip.
  */
-function generateTooltipTSX(props: any, tokens?: TokenSet): string {
+function generateTooltipTSX(_props: any, _tokens?: TokenSet): string {
   return `<div className="tooltip-container">
   <span className="tooltip-trigger">{props.children}</span>
   <div className="tooltip-content">{props.content}</div>
@@ -343,7 +343,7 @@ function generateTooltipTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a popover.
  */
-function generatePopoverTSX(props: any, tokens?: TokenSet): string {
+function generatePopoverTSX(_props: any, _tokens?: TokenSet): string {
   return `<div className="popover-container">
   <button className="popover-trigger" onClick={props.onToggle}>
     {props.triggerText || 'Popover'}
@@ -357,7 +357,7 @@ function generatePopoverTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a drawer.
  */
-function generateDrawerTSX(props: any, tokens?: TokenSet): string {
+function generateDrawerTSX(props: any, _tokens?: TokenSet): string {
   const position = props.position || 'left';
   
   return `<div className={\`drawer drawer-\${props.isOpen ? 'open' : 'closed'} drawer-pos-\${'${position}'}\`}>
@@ -377,7 +377,7 @@ function generateDrawerTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a dialog.
  */
-function generateDialogTSX(props: any, tokens?: TokenSet): string {
+function generateDialogTSX(_props: any, _tokens?: TokenSet): string {
   return `<dialog className={\`dialog \${props.isOpen ? 'open' : ''}\`}>
   <div className="dialog-content">
     <div className="dialog-header">
@@ -397,7 +397,7 @@ function generateDialogTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a generic React TSX component for unknown types.
  */
-function generateGenericComponentTSX(type: ComponentType, props: any, tokens?: TokenSet): string {
+function generateGenericComponentTSX(type: ComponentType, _props: any, _tokens?: TokenSet): string {
   return `<div className="${type}-component" {...props}>
   {/* Generic ${type} component */}
   {props.children}
@@ -693,7 +693,7 @@ export async function exportAll(graph: Graph, basePath: string = './exports', op
  * @param options - Export options
  * @returns Promise that resolves to export result
  */
-export async function exportGraph(graph: Graph, path: string = './App.tsx', options: ExportOptions = {}): Promise<ExportResult> {
+export async function exportGraph(graph: Graph, path: string = './App.tsx', _options: ExportOptions = {}): Promise<ExportResult> {
   try {
     // Generate a top-level component that includes all components in the graph
     let content = `import React from 'react';\n\n`;
