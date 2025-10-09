@@ -19,7 +19,7 @@ export async function runUnitTests(graph: Graph): Promise<{ passed: boolean; dia
     diagnostics.push(...schemaTestDiagnostics);
 
     // Run unit tests for UI components
-    const uiComponentTestDiagnostics = await runUIComponentUnitTests(graph);
+    const uiComponentTestDiagnostics = await runUIComponentUnitTests();
     diagnostics.push(...uiComponentTestDiagnostics);
 
     // Run unit tests for agent modules
@@ -134,7 +134,7 @@ async function runSchemaUnitTests(): Promise<Diagnostic[]> {
 /**
  * Run unit tests for UI components.
  */
-async function runUIComponentUnitTests(_graph: Graph): Promise<Diagnostic[]> {
+async function runUIComponentUnitTests(): Promise<Diagnostic[]> {
   const diagnostics: Diagnostic[] = [];
 
   try {
