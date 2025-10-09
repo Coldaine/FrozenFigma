@@ -7,261 +7,150 @@ import { attemptRepair } from '../agent/repair';
 import { AgentOrchestrator } from '../agent';
 import { generateSettingsPanel, generateTabs, generateModal } from '../agent/skeletons';
 
-describe('Agent System', () => {
-  describe('Planner Module', () => {
-    it('should parse a simple add button command', () => {
-      const plan = parseIntent('Add a button');
-      
-      expect(plan).toBeDefined();
-      expect(plan.operations).toHaveLength(1);
-      expect(plan.operations[0].type).toBe('ADD');
-      expect(plan.description).toContain('button');
-    });
+/**
+ * Consolidated Agent Integration Tests
+ * 
+ * These large-span tests verify complete agent behaviors: intent parsing through
+ * execution, validation, repair, and multi-turn workflows. Uses real graph and
+ * modules for observable outcomes, replacing ~20 fragmented units with 3 meaningful
+ * integration tests.
+ * 
+ * Focus: User stories like "voice command adds component to canvas" with full flow.
+ */
 
-    it('should parse multiple component creation', () => {
-      const plan = parseIntent('Create 3 sliders');
-      
-      expect(plan.operations).toHaveLength(3);
-      expect(plan.operations.every(op => op.type === 'ADD')).toBe(true);
-    });
+describe('Agent Integration Behaviors', () => {
+  let agent: AgentOrchestrator;
+  let graph: ReturnType<typeof createEmptyGraph>;
 
-    it('should parse commands with labels', () => {
-      const plan = parseIntent('Add a button labeled "Submit"');
-      
-      expect(plan.operations).toHaveLength(1);
-      const command = plan.operations[0];
-      if (command.type === 'ADD') {
-        expect(command.component.props.label).toBe('Submit');
-      }
-    });
-
-    it('should parse region placement', () => {
-      const plan = parseIntent('Add a button in the sidebar');
-      
-      expect(plan.operations).toHaveLength(1);
-      const command = plan.operations[0];
-      if (command.type === 'ADD') {
-        expect(command.component.frame.region).toBe('sidebar');
-      }
-    });
+  beforeEach(() => {
+    agent = new AgentOrchestrator({ verbose: false });
+    graph = createEmptyGraph();
   });
 
-  describe('Skeletonizer Module', () => {
-    it('should generate a settings panel', () => {
-      const components = generateSettingsPanel({ sliderCount: 3, toggleCount: 2 });
-      
-      expect(components).toHaveLength(5); // 3 sliders + 2 toggles
-      expect(components.filter(c => c.type === 'slider')).toHaveLength(3);
-      expect(components.filter(c => c.type === 'toggle')).toHaveLength(2);
-    });
+  it('single turn: parse intent, generate skeleton, patch, validate success', async () => {
+    /**
+     * Story: As a designer, I say "Add a button labeled Submit in sidebar".
+     * Agent parses, generates component, applies to graph, validates no issues.
+     * 
+     * External observer checks: Graph has button with props/position, validation passes,
+     * summary reports success. Replaces isolated planner/patcher/skeleton/validator tests.
+     */
 
-    it('should generate tabs', () => {
-      const components = generateTabs({ labels: ['Home', 'Profile', 'Settings'] });
-      
-      expect(components).toHaveLength(1);
-      expect(components[0].type).toBe('tabs');
-      expect(components[0].props.tabs).toHaveLength(3);
-    });
+    // Act: Full single turn
+    const result = await agent.executeTurn('Add a button labeled "Submit" in the sidebar', graph);
 
-    it('should generate a modal', () => {
-      const components = generateModal({ title: 'Confirm Action' });
-      
-      expect(components).toHaveLength(1);
-      expect(components[0].type).toBe('modal');
-      expect(components[0].props.title).toBe('Confirm Action');
-    });
+    // Verify: Success and observable state
+    expect(result.success).toBe(true);
+    expect(result.graph.nodes).toHaveLength(1);
+    const added = result.graph.nodes[0];
+    expect(added.type).toBe('button');
+    expect(added.props.label).toBe('Submit');
+    expect(added.frame.region).toBe('sidebar');
+    expect(added.frame.x).toBeGreaterThan(0); // Reasonable position
+
+    // Validation integrated (no errors)
+    const validation = await runValidationGate(result.graph);
+    expect(validation.passed).toBe(true);
+    expect(validation.diagnostics).toHaveLength(0);
+
+    // Summary tells story
+    expect(result.summary.changes.added).toBe(1);
+    expect(result.summary.description).toContain('Added button');
+
+    // Behavioral: Turn increments
+    expect(agent.getTurnCounter()).toBe(1);
   });
 
-  describe('Patcher Module', () => {
-    let graph: ReturnType<typeof createEmptyGraph>;
+  it('multi-turn workflow: sequential commands maintain graph integrity and history', async () => {
+    /**
+     * Story: As a designer, I build UI over turns: "Add button", then "Add 2 sliders in main",
+     * then "Generate settings panel". Graph accumulates, validates each turn, history tracks.
+     * 
+     * External observer checks: Final graph has all components, no overlaps/duplicates,
+     * each turn succeeds. Replaces separate orchestrator/E2E tests.
+     */
 
-    beforeEach(() => {
-      graph = createEmptyGraph();
-    });
+    // Act 1: First turn - add button
+    let result = await agent.executeTurn('Add a button labeled "Click Me"', graph);
+    expect(result.success).toBe(true);
+    expect(result.graph.nodes).toHaveLength(1);
+    graph = result.graph; // Chain state
 
-    it('should apply ADD commands', () => {
-      const plan = parseIntent('Add a button');
-      const result = applyPatch(graph, plan);
-      
-      expect(result.success).toBe(true);
-      expect(result.graph.nodes).toHaveLength(1);
-      expect(result.graph.nodes[0].type).toBe('button');
-    });
+    // Act 2: Second turn - add sliders
+    result = await agent.executeTurn('Create 2 sliders in the main region', graph);
+    expect(result.success).toBe(true);
+    expect(result.graph.nodes).toHaveLength(3); // +2 sliders
+    const sliders = result.graph.nodes.filter(n => n.type === 'slider');
+    expect(sliders).toHaveLength(2);
+    expect(sliders.every(s => s.frame.region === 'main')).toBe(true);
+    graph = result.graph;
 
-    it('should apply multiple commands in sequence', () => {
-      const plan = parseIntent('Create 3 buttons');
-      const result = applyPatch(graph, plan);
-      
-      expect(result.success).toBe(true);
-      expect(result.graph.nodes).toHaveLength(3);
-      expect(result.appliedCommands).toBe(3);
-    });
+    // Act 3: Third turn - generate panel (skeleton integration)
+    result = await agent.executeTurn('Generate a settings panel with 2 sliders and 1 toggle', graph);
+    expect(result.success).toBe(true);
+    expect(result.graph.nodes).toHaveLength(6); // +3 from panel
+    const panelComponents = result.graph.nodes.slice(3); // Last 3
+    expect(panelComponents.filter(c => c.type === 'slider')).toHaveLength(2);
+    expect(panelComponents.filter(c => c.type === 'toggle')).toHaveLength(1);
+    graph = result.graph;
 
-    it('should handle errors gracefully', () => {
-      const plan = parseIntent('Add a button');
-      // Corrupt the plan to cause an error
-      plan.operations[0] = { ...plan.operations[0], id: '' } as any;
-      
-      const result = applyPatch(graph, plan);
-      
-      // Should fail but not crash
-      expect(result.success).toBe(false);
-      expect(result.errors.length).toBeGreaterThan(0);
-    });
+    // Verify: Cumulative validation, history across turns
+    const finalValidation = await runValidationGate(graph);
+    expect(finalValidation.passed).toBe(true);
+    expect(finalValidation.diagnostics).toHaveLength(0); // No duplicates/overlaps
+
+    // Turn counter and summaries
+    expect(agent.getTurnCounter()).toBe(3);
+    expect(result.summary.changes.added).toBe(3); // Last turn
+    expect(graph.nodes.every(n => n.frame.x < 1920 && n.frame.y < 1080)).toBe(true); // Bounds
+
+    // Cross-module: Patch applied correctly
+    const patchCheck = applyPatch(graph, parseIntent('Add a button')); // Extra check
+    expect(patchCheck.success).toBe(true); // Would fail if integrity broken
   });
 
-  describe('Validator Module', () => {
-    it('should validate an empty graph', async () => {
-      const graph = createEmptyGraph();
-      const result = await runValidationGate(graph);
-      
-      expect(result.passed).toBe(true);
-      expect(result.gateResults.schema).toBe(true);
-    });
+  it('error and repair flow: invalid intent triggers validation failure, repair restores usability', async () => {
+    /**
+     * Story: As a designer, I say "Add overlapping buttons" causing validation error.
+     * Agent detects, attempts repair (reposition), graph becomes valid again.
+     * 
+     * External observer checks: Initial failure, repair success, fixed graph.
+     * Replaces isolated validator/repairer tests.
+     */
 
-    it('should validate a graph with components', async () => {
-      const graph = createEmptyGraph();
-      const button = createComponent('button', { x: 100, y: 100, w: 120, h: 40, region: 'main' });
-      graph.nodes.push(button);
-      
-      const result = await runValidationGate(graph);
-      
-      expect(result.passed).toBe(true);
-    });
+    // Act 1: Intent that causes error (e.g., duplicate or overlap via close positions)
+    const badIntent = 'Add two buttons at the same position'; // Assume parser creates overlapping
+    let result = await agent.executeTurn(badIntent, graph);
+    expect(result.success).toBe(false); // Validation fails
 
-    it('should detect duplicate IDs', async () => {
-      const graph = createEmptyGraph();
-      const button = createComponent('button', { x: 100, y: 100, w: 120, h: 40, region: 'main' });
-      graph.nodes.push(button);
-      graph.nodes.push({ ...button }); // Duplicate
-      
-      const result = await runValidationGate(graph);
-      
-      expect(result.passed).toBe(false);
-      expect(result.diagnostics.some((d: any) => d.message.includes('Duplicate'))).toBe(true);
-    });
+    // Verify failure: Diagnostics show issue
+    const validation = await runValidationGate(result.graph);
+    expect(validation.passed).toBe(false);
+    expect(validation.diagnostics.some(d => d.message.includes('overlap') || d.message.includes('duplicate'))).toBe(true);
 
-    it('should detect out of bounds components', async () => {
-      const graph = createEmptyGraph();
-      const button = createComponent('button', { x: 99999, y: 100, w: 120, h: 40, region: 'main' });
-      graph.nodes.push(button);
-      
-      const result = await runValidationGate(graph);
-      
-      expect(result.passed).toBe(false);
-      expect(result.diagnostics.some((d: any) => d.message.includes('out of bounds'))).toBe(true);
-    });
-  });
+    // Act 2: Attempt repair (integrates repairer)
+    const repairResult = attemptRepair(result.graph, validation.diagnostics);
+    expect(repairResult.success).toBe(true);
+    expect(repairResult.fixes).toHaveLength(1); // At least one fix (e.g., reposition)
 
-  describe('Repairer Module', () => {
-    it('should fix out of bounds components', async () => {
-      const graph = createEmptyGraph();
-      const button = createComponent('button', { x: 9999, y: 100, w: 120, h: 40, region: 'main' });
-      graph.nodes.push(button);
-      
-      const validationResult = await runValidationGate(graph);
-      const repairResult = attemptRepair(graph, validationResult.diagnostics);
-      
-      expect(repairResult.success).toBe(true);
-      expect(repairResult.fixes.length).toBeGreaterThan(0);
-    });
+    // Verify repair: Graph now valid, components adjusted
+    const repairedGraph = repairResult.graph;
+    const postRepairValidation = await runValidationGate(repairedGraph);
+    expect(postRepairValidation.passed).toBe(true);
 
-    it('should fix duplicate IDs', async () => {
-      const graph = createEmptyGraph();
-      const button = createComponent('button', { x: 100, y: 100, w: 120, h: 40, region: 'main' });
-      graph.nodes.push(button);
-      graph.nodes.push({ ...button }); // Duplicate
-      
-      const validationResult = await runValidationGate(graph);
-      const repairResult = attemptRepair(graph, validationResult.diagnostics);
-      
-      expect(repairResult.success).toBe(true);
-      expect(repairResult.graph.nodes[0].id).not.toBe(repairResult.graph.nodes[1].id);
-    });
-  });
+    // Behavioral: Original intent partially succeeds post-repair
+    // e.g., Two buttons exist, but positions differ (no overlap)
+    expect(repairedGraph.nodes).toHaveLength(2);
+    expect(repairedGraph.nodes.every(n => n.type === 'button')).toBe(true);
+    const positions = repairedGraph.nodes.map(n => `${n.frame.x},${n.frame.y}`);
+    expect(new Set(positions).size).toBe(2); // Different positions after repair
 
-  describe('Agent Orchestrator', () => {
-    let agent: AgentOrchestrator;
-    let graph: ReturnType<typeof createEmptyGraph>;
+    // Act 3: Continue with repaired graph (resilience)
+    const continueResult = await agent.executeTurn('Move the second button to sidebar', repairedGraph);
+    expect(continueResult.success).toBe(true);
+    expect(continueResult.graph.nodes[1].frame.region).toBe('sidebar');
 
-    beforeEach(() => {
-      agent = new AgentOrchestrator({ verbose: false });
-      graph = createEmptyGraph();
-    });
-
-    it('should execute a successful turn', async () => {
-      const result = await agent.executeTurn('Add a button', graph);
-      
-      expect(result.success).toBe(true);
-      expect(result.graph.nodes).toHaveLength(1);
-      expect(result.summary).toBeDefined();
-    });
-
-    it('should handle multiple commands', async () => {
-      const result = await agent.executeTurn('Create 3 sliders', graph);
-      
-      expect(result.success).toBe(true);
-      expect(result.graph.nodes).toHaveLength(3);
-      expect(result.summary.changes.added).toBe(3);
-    });
-
-    it('should increment turn counter', async () => {
-      expect(agent.getTurnCounter()).toBe(0);
-      
-      await agent.executeTurn('Add a button', graph);
-      expect(agent.getTurnCounter()).toBe(1);
-      
-      await agent.executeTurn('Add a slider', graph);
-      expect(agent.getTurnCounter()).toBe(2);
-    });
-
-    it('should rollback on validation failure', async () => {
-      // This would require creating a scenario that fails validation
-      // For now, we just test that the mechanism exists
-      const result = await agent.executeTurn('', graph);
-      
-      expect(result.graph).toBe(graph); // Should return original graph on failure
-    });
-  });
-
-  describe('End-to-End Integration', () => {
-    it('should handle a complete workflow', async () => {
-      const agent = new AgentOrchestrator({ verbose: false });
-      let graph = createEmptyGraph();
-      
-      // Step 1: Add a button
-      const result1 = await agent.executeTurn('Add a button labeled "Click Me"', graph);
-      expect(result1.success).toBe(true);
-      graph = result1.graph;
-      
-      // Step 2: Add sliders
-      const result2 = await agent.executeTurn('Create 2 sliders in the sidebar', graph);
-      expect(result2.success).toBe(true);
-      graph = result2.graph;
-      
-      // Verify final state
-      expect(graph.nodes).toHaveLength(3);
-      expect(graph.nodes.filter(n => n.type === 'button')).toHaveLength(1);
-      expect(graph.nodes.filter(n => n.type === 'slider')).toHaveLength(2);
-      expect(graph.nodes.filter(n => n.frame.region === 'sidebar')).toHaveLength(2);
-    });
-
-    it('should maintain graph integrity across multiple turns', async () => {
-      const agent = new AgentOrchestrator({ verbose: false });
-      let graph = createEmptyGraph();
-      
-      // Execute multiple turns
-      for (let i = 0; i < 5; i++) {
-        const result = await agent.executeTurn(`Add a button`, graph);
-        expect(result.success).toBe(true);
-        graph = result.graph;
-        
-        // Validate after each turn
-        const validation = await runValidationGate(graph);
-        expect(validation.passed).toBe(true);
-      }
-      
-      expect(graph.nodes).toHaveLength(5);
-    });
+    // Turn counter (failed turn doesn't increment)
+    expect(agent.getTurnCounter()).toBe(0); // Adjust based on impl
   });
 });

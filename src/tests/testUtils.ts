@@ -335,3 +335,187 @@ export class GraphComparator {
     return result;
   }
 }
+/**
+ * Behavioral FakeStore: Simulates real store behaviors with stateful history, 
+ * selection, locking, and auto-validation. Replaces synthetic MockStore for 
+ * integration tests, ensuring observable outcomes without full app dependency.
+ */
+export class FakeStore {
+  private graph: Graph = createEmptyGraph();
+  private selection: { selectedIds: string[] } = { selectedIds: [] };
+  private locks: Set<string> = new Set();
+  private history: any[] = [];
+  private session: { currentTurn: number; checkpoints: any[] } = { currentTurn: 0, checkpoints: [] };
+
+  // Core graph actions with behavioral side effects
+  addComponent(component: ComponentSpec): void {
+    this.graph.nodes.push({ ...component });
+    this.history.push({ type: 'add', payload: component, timestamp: Date.now() });
+    this.validateGraph(); // Auto-validate (real behavior)
+  }
+
+  removeComponent(id: string): boolean {
+    const initialLength = this.graph.nodes.length;
+    this.graph.nodes = this.graph.nodes.filter(node => node.id !== id);
+    if (initialLength > this.graph.nodes.length) {
+      this.history.push({ type: 'remove', payload: { id }, timestamp: Date.now() });
+      this.clearSelection(id); // Behavioral: Deselect if removed
+      return true;
+    }
+    return false;
+  }
+
+  updateComponent(id: string, updates: Partial<ComponentSpec>): boolean {
+    const index = this.graph.nodes.findIndex(node => node.id === id);
+    if (index !== -1) {
+      this.graph.nodes[index] = { ...this.graph.nodes[index], ...updates };
+      this.history.push({ type: 'update', payload: { id, updates }, timestamp: Date.now() });
+      return true;
+    }
+    return false;
+  }
+
+  moveComponent(id: string, x: number, y: number, region: string): boolean {
+    const component = this.getComponentById(id);
+    if (!component) return false;
+    const { w, h } = component.frame;
+    return this.updateComponent(id, { frame: { x, y, w, h, region } });
+  }
+
+  addComponents(components: ComponentSpec[]): void {
+    components.forEach(comp => this.addComponent(comp));
+  }
+
+  // Selection actions with behavioral constraints (e.g., can't select locked)
+  selectComponent(id: string): void {
+    if (this.locks.has(id)) return; // Behavioral: Ignore locked
+    if (!this.selection.selectedIds.includes(id)) {
+      this.selection.selectedIds.push(id);
+    }
+  }
+
+  deselectComponent(id: string): void {
+    this.selection.selectedIds = this.selection.selectedIds.filter(sid => sid !== id);
+  }
+
+  selectMultiple(ids: string[]): void {
+    ids.forEach(id => this.selectComponent(id));
+  }
+
+  toggleSelection(id: string): void {
+    if (this.selection.selectedIds.includes(id)) {
+      this.deselectComponent(id);
+    } else {
+      this.selectComponent(id);
+    }
+  }
+
+  lockComponent(id: string): void {
+    this.locks.add(id);
+    this.deselectComponent(id); // Behavioral: Unlock deselects
+  }
+
+  unlockComponent(id: string): void {
+    this.locks.delete(id);
+  }
+
+  // Selectors (external observable views)
+  getAllComponents(): ComponentSpec[] {
+    return [...this.graph.nodes];
+  }
+
+  getComponentById(id: string): ComponentSpec | undefined {
+    return this.graph.nodes.find(node => node.id === id);
+  }
+
+  getComponentsByType(type: ComponentType): ComponentSpec[] {
+    return this.graph.nodes.filter(node => node.type === type);
+  }
+
+  getComponentsByRegion(region: string): ComponentSpec[] {
+    return this.graph.nodes.filter(node => node.frame.region === region);
+  }
+
+  getSelectedComponents(): ComponentSpec[] {
+    return this.selection.selectedIds.map(id => this.getComponentById(id)).filter(Boolean) as ComponentSpec[];
+  }
+
+  isSelected(id: string): boolean {
+    return this.selection.selectedIds.includes(id);
+  }
+
+  isLocked(id: string): boolean {
+    return this.locks.has(id);
+  }
+
+  canUndo(): boolean {
+    return this.history.length > 0;
+  }
+
+  // Session actions with real state management
+  createCheckpoint(description: string): void {
+    this.session.checkpoints.push({
+      id: generateId(),
+      description,
+      graph: { ...this.graph },
+      timestamp: Date.now()
+    });
+  }
+
+  restoreCheckpoint(checkpointId: string): boolean {
+    const checkpoint = this.session.checkpoints.find(cp => cp.id === checkpointId);
+    if (checkpoint) {
+      this.graph = { ...checkpoint.graph };
+      this.history.push({ type: 'restore', payload: { checkpointId }, timestamp: Date.now() });
+      return true;
+    }
+    return false;
+  }
+
+  incrementTurn(): void {
+    this.session.currentTurn++;
+  }
+
+  // Behavioral validation (simulates real gate runner)
+  private validateGraph(): void {
+    // Check duplicates
+    const ids = this.graph.nodes.map(n => n.id);
+    if (new Set(ids).size !== ids.length) {
+      throw new Error('Duplicate IDs detected - graph invalid');
+    }
+    // Check bounds (assume canvas 1920x1080)
+    this.graph.nodes.forEach(node => {
+      if (node.frame.x > 1920 || node.frame.y > 1080 || node.frame.w <= 0 || node.frame.h <= 0) {
+        throw new Error(`Component ${node.id} out of bounds`);
+      }
+    });
+  }
+
+  // Getters for external observation
+  getGraph(): Graph {
+    return { ...this.graph };
+  }
+
+  getHistory(): any[] {
+    return [...this.history];
+  }
+
+  getSession(): any {
+    return { ...this.session };
+  }
+
+  // Reset for test isolation
+  reset(): void {
+    this.graph = createEmptyGraph();
+    this.selection = { selectedIds: [] };
+    this.locks.clear();
+    this.history = [];
+    this.session = { currentTurn: 0, checkpoints: [] };
+  }
+
+  private clearSelection(id: string): void {
+    if (this.selection.selectedIds.includes(id)) {
+      this.deselectComponent(id);
+    }
+  }
+}
