@@ -1,8 +1,23 @@
-This workflow runs the project's validation gate and a strict Markdown linter for docs.
+# CI Workflow - Informational Checks
 
-Notes:
-- Local markdown linting is intentionally lenient to avoid distracting the developer during edits.
-- The CI runs `.markdownlint-ci.json` with stricter rules to enforce documentation quality on PRs.
+This workflow provides **informational feedback** on code quality without blocking PRs or failing builds.
 
-To update markdown rules locally, edit `.markdownlint.json`.
-To update CI markdown rules, edit `.markdownlint-ci.json`.
+## What it does
+
+- **ESLint**: Checks code style and common issues
+- **TypeScript**: Verifies type correctness
+- **Tests**: Runs unit tests
+- **Smoke Tests**: Quick integration checks
+- **Build**: Ensures the project compiles
+
+## Philosophy
+
+All checks except the build use `continue-on-error: true`, meaning:
+- ✅ Failures show up as warnings, not errors
+- ✅ PRs won't be blocked by linting opinions
+- ✅ You get useful feedback without strict enforcement
+- ✅ The build is the only hard requirement (code must compile)
+
+## Customization
+
+To make any check required (fail the workflow if it fails), remove the `continue-on-error: true` line from that job in `ci.yml`.

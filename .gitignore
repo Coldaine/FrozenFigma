@@ -68,3 +68,11 @@ Thumbs.db
 # Misc
 *.seed
 *.pid.lock
+
+# FrozenFigma specific
+/artifacts/
+/artifacts/**/*
+*.session.jsonl
+session.jsonl
+checkpoints/
+logs/
