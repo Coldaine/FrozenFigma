@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ComponentSpec } from '../../../schema';
+import { SettingsPanelComponent } from './SettingsPanel';
 
 /**
  * Props shared by all UI component renderers
@@ -574,6 +575,10 @@ export const renderComponent = (
       return <TrayComponent {...componentProps} />;
     case 'popover':
       return <PopoverComponent {...componentProps} />;
+    case 'settings-panel':
+      // For settings panel, we need to find child components
+      // This is a simplified implementation - in practice, we'd need to pass child components
+      return <SettingsPanelComponent {...componentProps} childComponents={[]} />;
     default:
       return (
         <div className="p-4 border-2 border-dashed border-border rounded-md">

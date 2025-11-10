@@ -26,6 +26,7 @@ export const ComponentTypeSchema = z.enum([
   'popover',
   'drawer',
   'dialog',
+  'settings-panel',
 ]);
 
 export type ComponentType = z.infer<typeof ComponentTypeSchema>;
