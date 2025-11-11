@@ -1,5 +1,5 @@
 import { Graph } from '../../schema';
-import { generateDiff } from '../artifacts';
+import { generateDiff, GraphDiff } from '../artifacts';
 import { saveArtifact, loadArtifact, listArtifacts } from '../artifacts';
 import { getFileManager } from '../utils/fileManager';
 
@@ -17,7 +17,7 @@ export interface Commit {
   message: string;
   author: string;
   graph: Graph;
- diff: any; // The diff between this commit and parent
+  diff: GraphDiff; // The diff between this commit and parent
 }
 
 /**
@@ -109,7 +109,19 @@ export class VersionControl {
       }
       
       // Calculate diff if we have a parent
-      const diff = parentGraph ? generateDiff(parentGraph, graph) : { initial: true, changes: [] };
+      const diff: GraphDiff = parentGraph ? generateDiff(parentGraph, graph) : {
+        timestamp: new Date().toISOString(),
+        changes: {
+          nodes: { added: [], removed: [], updated: [] },
+          tokens: null,
+          meta: null,
+        },
+        summary: {
+          nodeCount: { old: 0, new: 0, change: 0 },
+          tokensChanged: false,
+          metaChanged: false,
+        }
+      };
       
       const newCommit: Commit = {
         id: commitId,
@@ -316,8 +328,11 @@ export class VersionControl {
       for (const artifact of commitArtifacts) {
         const commitArtifact = await loadArtifact(artifact.id);
         if (commitArtifact && commitArtifact.content) {
-          const commit: Commit = commitArtifact.content;
-          this.state.commits.push(commit);
+          const commit = commitArtifact.content as Commit;
+          // Basic validation of artifact shape
+          if (commit && commit.id && commit.graph) {
+            this.state.commits.push(commit);
+          }
           
           // If this is the latest commit for the main branch, set as HEAD
           if (!this.state.head || new Date(commit.timestamp) > new Date(this.state.head)) {
@@ -388,7 +403,7 @@ export class VersionControl {
    * @param toCommitId - The ending commit ID
    * @returns The diff object
    */
-  getDiff(fromCommitId: string, toCommitId: string): any {
+  getDiff(fromCommitId: string, toCommitId: string): GraphDiff {
     // Find both commits
     const fromCommit = this.state.commits.find(c => c.id === fromCommitId);
     const toCommit = this.state.commits.find(c => c.id === toCommitId);

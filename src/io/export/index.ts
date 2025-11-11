@@ -1,5 +1,8 @@
 import { ComponentSpec, Graph, TokenSet, ComponentType } from '../../schema';
 
+// Helper alias for typed props used in TSX generators
+type PropsRecord = Record<string, unknown>;
+
 // ============================================================================
 // EXPORT TYPES & INTERFACES
 // ============================================================================
@@ -136,15 +139,19 @@ export default ${componentName};
 /**
  * Generates a React TSX component for a button.
  */
-function generateButtonTSX(props: any, tokens?: TokenSet): string {
-  const { text = 'Button' } = props;
+function generateButtonTSX(props: PropsRecord, tokens?: TokenSet): string {
+  const text = typeof props['text'] === 'string' ? props['text'] : 'Button';
+  const variant = typeof props['variant'] === 'string' ? props['variant'] : 'primary';
+  const size = typeof props['size'] === 'string' ? props['size'] : 'md';
+  const classNameSuffix = typeof props['className'] === 'string' && props['className'] ? ' ' + props['className'] : '';
   
   // Apply tokens if available
   const style = tokens ? generateStyleFromTokens(tokens, 'button') : {};
+  const styleString = JSON.stringify(style, null, 2).replace(/\n/g, '\n ');
   
  return `<button
-  className={\`btn btn-\${variant} btn-\${size}\${props.className ? ' ' + props.className : ''}\`}
-  style={${JSON.stringify(style, null, 2).replace(/\n/g, '\n ')}}
+  className={\`btn btn-${variant} btn-${size}${classNameSuffix}\`}
+  style={${styleString}}
   {...props}
 >
   ${text}
@@ -154,15 +161,18 @@ function generateButtonTSX(props: any, tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for an input.
  */
-function generateInputTSX(props: any, _tokens?: TokenSet): string {
-  const { label, placeholder, type = 'text', value } = props;
+function generateInputTSX(props: PropsRecord, _tokens?: TokenSet): string {
+  void _tokens;
+  const label = typeof props['label'] === 'string' ? props['label'] : undefined;
+  const placeholder = typeof props['placeholder'] === 'string' ? props['placeholder'] : '';
+  const type = typeof props['type'] === 'string' ? props['type'] : 'text';
   
   return `<div className="input-container">
   ${label ? `<label>${label}</label>` : ''}
   <input
     type="${type}"
     placeholder="${placeholder || ''}"
-    value={${value ? `"${value}"` : '{props.value}'}}
+    value={props.value}
     className="input-field"
     {...props}
   />
@@ -172,8 +182,11 @@ function generateInputTSX(props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a card.
  */
-function generateCardTSX(props: any, _tokens?: TokenSet): string {
-  const { title, content, footer } = props;
+function generateCardTSX(props: PropsRecord, _tokens?: TokenSet): string {
+  void _tokens;
+  const title = typeof props['title'] === 'string' ? props['title'] : undefined;
+  const content = typeof props['content'] === 'string' ? props['content'] : undefined;
+  const footer = typeof props['footer'] === 'string' ? props['footer'] : undefined;
   
   return `<div className="card">
   ${title ? `<div className="card-header"><h3>${title}</h3></div>` : ''}
@@ -187,7 +200,8 @@ function generateCardTSX(props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a card grid.
  */
-function generateCardGridTSX(_props: any, _tokens?: TokenSet): string {
+function generateCardGridTSX(_props: PropsRecord, _tokens?: TokenSet): string {
+  void _props; void _tokens;
   return `<div className="card-grid">
   {/* Map through card data if provided */}
   {props.cards?.map((card: any, index: number) => (
@@ -202,7 +216,8 @@ function generateCardGridTSX(_props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a form.
  */
-function generateFormTSX(_props: any, _tokens?: TokenSet): string {
+function generateFormTSX(_props: PropsRecord, _tokens?: TokenSet): string {
+  void _props; void _tokens;
   return `<form className="form" onSubmit={props.onSubmit}>
   {/* Form fields would be generated based on props.fields */}
   {props.children}
@@ -215,8 +230,11 @@ function generateFormTSX(_props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a slider.
  */
-function generateSliderTSX(props: any, _tokens?: TokenSet): string {
-  const { min = 0, max = 100, value = 50 } = props;
+function generateSliderTSX(props: PropsRecord, _tokens?: TokenSet): string {
+  void _tokens;
+  const min = typeof props['min'] === 'number' ? props['min'] : 0;
+  const max = typeof props['max'] === 'number' ? props['max'] : 100;
+  const value = typeof props['value'] === 'number' ? props['value'] : 50;
   
   return `<div className="slider-container">
   <input
@@ -234,8 +252,9 @@ function generateSliderTSX(props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a toggle.
  */
-function generateToggleTSX(props: any, _tokens?: TokenSet): string {
-  const { checked = false } = props;
+function generateToggleTSX(props: PropsRecord, _tokens?: TokenSet): string {
+  void _tokens;
+  const checked = typeof props['checked'] === 'boolean' ? props['checked'] : false;
   
   return `<div className="toggle-container">
   <input
@@ -251,7 +270,8 @@ function generateToggleTSX(props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for tabs.
  */
-function generateTabsTSX(_props: any, _tokens?: TokenSet): string {
+function generateTabsTSX(_props: PropsRecord, _tokens?: TokenSet): string {
+  void _props; void _tokens;
   return `<div className="tabs">
   <div className="tab-headers">
     {props.tabs?.map((tab: any, index: number) => (
@@ -273,7 +293,8 @@ function generateTabsTSX(_props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a modal.
  */
-function generateModalTSX(_props: any, _tokens?: TokenSet): string {
+function generateModalTSX(_props: PropsRecord, _tokens?: TokenSet): string {
+  void _props; void _tokens;
   return `<div className={\`modal \${props.isOpen ? 'open' : 'closed'}\`}>
   <div className="modal-overlay" onClick={props.onClose}></div>
   <div className="modal-content">
@@ -294,8 +315,9 @@ function generateModalTSX(_props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a tray.
  */
-function generateTrayTSX(props: any, _tokens?: TokenSet): string {
-  const position = props.position || 'right';
+function generateTrayTSX(props: PropsRecord, _tokens?: TokenSet): string {
+  void _tokens;
+  const position = typeof props['position'] === 'string' ? props['position'] : 'right';
   
   return `<div className={\`tray tray-\${props.isOpen ? 'open' : 'closed'} tray-pos-\${'${position}'}\`}>
   <div className="tray-content">
@@ -307,7 +329,8 @@ function generateTrayTSX(props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a select dropdown.
  */
-function generateSelectTSX(_props: any, _tokens?: TokenSet): string {
+function generateSelectTSX(_props: PropsRecord, _tokens?: TokenSet): string {
+  void _props; void _tokens;
   return `<select className="select" {...props}>
   {props.options?.map((option: any, index: number) => (
     <option key={index} value={option.value}>
@@ -320,10 +343,12 @@ function generateSelectTSX(_props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a textarea.
  */
-function generateTextareaTSX(props: any, _tokens?: TokenSet): string {
+function generateTextareaTSX(props: PropsRecord, _tokens?: TokenSet): string {
+  void _tokens;
+  const placeholder = typeof props['placeholder'] === 'string' ? props['placeholder'] : '';
   return `<textarea
   className="textarea"
-  placeholder="${props.placeholder || ''}"
+  placeholder="${placeholder}"
   {...props}
 ></textarea>`;
 }
@@ -331,8 +356,10 @@ function generateTextareaTSX(props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a progress bar.
  */
-function generateProgressTSX(props: any, _tokens?: TokenSet): string {
- const { value = 0, max = 100 } = props;
+function generateProgressTSX(props: PropsRecord, _tokens?: TokenSet): string {
+  void _tokens;
+ const value = typeof props['value'] === 'number' ? props['value'] : 0;
+ const max = typeof props['max'] === 'number' ? props['max'] : 100;
   
   return `<div className="progress-container">
   <div
@@ -346,7 +373,8 @@ function generateProgressTSX(props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a tooltip.
  */
-function generateTooltipTSX(_props: any, _tokens?: TokenSet): string {
+function generateTooltipTSX(_props: PropsRecord, _tokens?: TokenSet): string {
+  void _props; void _tokens;
   return `<div className="tooltip-container">
   <span className="tooltip-trigger">{props.children}</span>
   <div className="tooltip-content">{props.content}</div>
@@ -356,7 +384,8 @@ function generateTooltipTSX(_props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a popover.
  */
-function generatePopoverTSX(_props: any, _tokens?: TokenSet): string {
+function generatePopoverTSX(_props: PropsRecord, _tokens?: TokenSet): string {
+  void _props; void _tokens;
   return `<div className="popover-container">
   <button className="popover-trigger" onClick={props.onToggle}>
     {props.triggerText || 'Popover'}
@@ -370,8 +399,9 @@ function generatePopoverTSX(_props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a drawer.
  */
-function generateDrawerTSX(props: any, _tokens?: TokenSet): string {
-  const position = props.position || 'left';
+function generateDrawerTSX(props: PropsRecord, _tokens?: TokenSet): string {
+  void _tokens;
+  const position = typeof props['position'] === 'string' ? props['position'] : 'left';
   
   return `<div className={\`drawer drawer-\${props.isOpen ? 'open' : 'closed'} drawer-pos-\${'${position}'}\`}>
   <div className="drawer-overlay" onClick={props.onClose}></div>
@@ -390,7 +420,8 @@ function generateDrawerTSX(props: any, _tokens?: TokenSet): string {
 /**
  * Generates a React TSX component for a dialog.
  */
-function generateDialogTSX(_props: any, _tokens?: TokenSet): string {
+function generateDialogTSX(_props: PropsRecord, _tokens?: TokenSet): string {
+  void _props; void _tokens;
   return `<dialog className={\`dialog \${props.isOpen ? 'open' : ''}\`}>
   <div className="dialog-content">
     <div className="dialog-header">
@@ -411,6 +442,7 @@ function generateDialogTSX(_props: any, _tokens?: TokenSet): string {
  * Generates a React TSX component for a settings panel.
  */
 function generateSettingsPanelTSX(component: ComponentSpec, _tokens?: TokenSet): string {
+  void _tokens;
   const { props } = component;
   const title = props.title || 'Settings Panel';
 
@@ -560,25 +592,25 @@ export async function exportComponent(component: ComponentSpec, path: string, op
     
     // In a browser environment, we'll simulate file saving
     if (typeof window !== 'undefined' && window.Blob && window.URL) {
-      const blob = new Blob([content], { type: 'application/typescript' });
-      const url = window.URL.createObjectURL(blob);
-      
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = path.split('/').pop() || `${component.name || component.type}.tsx`;
+    const blob = new Blob([content], { type: 'application/typescript' });
+    const url = window.URL.createObjectURL(blob);
+
+    const anchor = document.createElement('a') as HTMLAnchorElement;
+    anchor.href = url;
+    anchor.download = path.split('/').pop() || `${component.name || component.type}.tsx`;
       try {
         // Append/remove will fail if document.createElement was mocked to return a plain object
         // Wrap in a try/catch and fall back to just calling click()
         if (document.body && typeof document.body.appendChild === 'function') {
-          document.body.appendChild(a as any);
+          document.body.appendChild(anchor);
         }
-        a.click();
+        anchor.click();
         if (document.body && typeof document.body.removeChild === 'function') {
-          try { document.body.removeChild(a as any); } catch (e) { /* ignore */ }
+          try { document.body.removeChild(anchor); } catch (e) { void e; }
         }
       } catch (err) {
         // Best effort: call click directly if append/remove fails
-        try { (a as any).click && (a as any).click(); } catch (ignore) {}
+    try { anchor.click && anchor.click(); } catch (ignore) { void ignore; }
       }
       window.URL.revokeObjectURL(url);
     } else {
@@ -646,22 +678,22 @@ export async function exportAll(graph: Graph, basePath: string = './exports', op
       const tokensContent = generateTokens(graph.tokens);
       
       if (typeof window !== 'undefined' && window.Blob && window.URL) {
-        const blob = new Blob([tokensContent], { type: 'application/json' });
-        const url = window.URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'tokens.json';
+    const blob = new Blob([tokensContent], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+
+    const anchor = document.createElement('a') as HTMLAnchorElement;
+    anchor.href = url;
+    anchor.download = 'tokens.json';
         try {
           if (document.body && typeof document.body.appendChild === 'function') {
-            document.body.appendChild(a as any);
+            document.body.appendChild(anchor);
           }
-          a.click();
+          anchor.click();
           if (document.body && typeof document.body.removeChild === 'function') {
-            try { document.body.removeChild(a as any); } catch (e) { /* ignore */ }
+            try { document.body.removeChild(anchor); } catch (e) { /* ignore */ }
           }
         } catch (err) {
-          try { (a as any).click && (a as any).click(); } catch (ignore) {}
+            try { anchor.click && anchor.click(); } catch (ignore) { void ignore; }
         }
         window.URL.revokeObjectURL(url);
       } else {
@@ -681,22 +713,23 @@ export async function exportAll(graph: Graph, basePath: string = './exports', op
       .join('\\n');
       
     if (typeof window !== 'undefined' && window.Blob && window.URL) {
-      const blob = new Blob([indexContent], { type: 'application/typescript' });
-      const url = window.URL.createObjectURL(blob);
+  const blob = new Blob([indexContent], { type: 'application/typescript' });
+  const url = window.URL.createObjectURL(blob);
       
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'index.ts';
+  const anchor = document.createElement('a') as HTMLAnchorElement;
+  anchor.href = url;
+  anchor.download = 'index.ts';
       try {
         if (document.body && typeof document.body.appendChild === 'function') {
-          document.body.appendChild(a as any);
+          document.body.appendChild(anchor);
         }
-        a.click();
+        anchor.click();
         if (document.body && typeof document.body.removeChild === 'function') {
-          try { document.body.removeChild(a as any); } catch (e) { /* ignore */ }
+          try { document.body.removeChild(anchor); } catch (e) { void e; }
         }
       } catch (err) {
-        try { (a as any).click && (a as any).click(); } catch (ignore) {}
+        try { anchor.click && anchor.click(); } catch (ignore) { void ignore; }
+        void err;
       }
       window.URL.revokeObjectURL(url);
     } else {
@@ -724,6 +757,8 @@ export async function exportAll(graph: Graph, basePath: string = './exports', op
  */
 export async function exportGraph(graph: Graph, path: string = './App.tsx', _options: ExportOptions = {}): Promise<ExportResult> {
   try {
+    // Suppress unused parameter warning - options are reserved for future use
+    void _options;
     // Generate a top-level component that includes all components in the graph
     let content = `import React from 'react';\\n\\n`;
     
@@ -751,9 +786,18 @@ export async function exportGraph(graph: Graph, path: string = './App.tsx', _opt
       const a = document.createElement('a');
       a.href = url;
       a.download = path.split('/').pop() || 'App.tsx';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      try {
+        if (document.body && typeof document.body.appendChild === 'function') {
+          document.body.appendChild(a as HTMLAnchorElement);
+        }
+        (a as HTMLAnchorElement).click();
+        if (document.body && typeof document.body.removeChild === 'function') {
+          try { document.body.removeChild(a as HTMLAnchorElement); } catch (e) { void e; }
+        }
+      } catch (err) {
+        try { (a as HTMLAnchorElement).click && (a as HTMLAnchorElement).click(); } catch (ignore) { void ignore; }
+        void err;
+      }
       window.URL.revokeObjectURL(url);
     } else {
       console.log(`Exporting graph to ${path}:`, content.substring(0, 100) + '...');
@@ -807,20 +851,20 @@ export async function exportTokens(tokens: TokenSet, path: string, format: 'json
       
       const blob = new Blob([content], { type: mimeType });
       const url = window.URL.createObjectURL(blob);
-      
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = path.split('/').pop() || `tokens.${format}`;
+
+      const anchor = document.createElement('a') as HTMLAnchorElement;
+      anchor.href = url;
+      anchor.download = path.split('/').pop() || `tokens.${format}`;
       try {
         if (document.body && typeof document.body.appendChild === 'function') {
-          document.body.appendChild(a as any);
+          document.body.appendChild(anchor);
         }
-        a.click();
+        anchor.click();
         if (document.body && typeof document.body.removeChild === 'function') {
-          try { document.body.removeChild(a as any); } catch (e) { /* ignore */ }
+          try { document.body.removeChild(anchor); } catch (e) { /* ignore */ }
         }
       } catch (err) {
-        try { (a as any).click && (a as any).click(); } catch (ignore) {}
+        try { anchor.click && anchor.click(); } catch (ignore) { void ignore; }
       }
       window.URL.revokeObjectURL(url);
     } else {
@@ -847,8 +891,8 @@ export async function exportTokens(tokens: TokenSet, path: string, format: 'json
 /**
  * Generates CSS styles from design tokens.
  */
-function generateStyleFromTokens(tokens: TokenSet, componentType: string): Record<string, any> {
-  const style: Record<string, any> = {};
+function generateStyleFromTokens(tokens: TokenSet, componentType: string): Record<string, string | number | undefined> {
+  const style: Record<string, string | number | undefined> = {};
   
   // Apply common tokens based on component type
   if (tokens.colors) {

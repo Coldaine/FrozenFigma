@@ -1,4 +1,4 @@
-import { Graph } from '../../schema';
+import { Graph, ComponentSpec } from '../../schema';
 import { getFileManager, createUniqueFileName } from '../utils/fileManager';
 
 // ============================================================================
@@ -39,7 +39,7 @@ export interface ArtifactMetadata {
  */
 export interface Artifact {
   metadata: ArtifactMetadata;
- content: any; // The actual artifact data (could be string, object, binary, etc.)
+ content: unknown; // The actual artifact data (could be string, object, binary, etc.)
 }
 
 // ============================================================================
@@ -57,7 +57,7 @@ export async function captureScreenshot(element?: HTMLElement, _quality: number 
   try {
     // In a browser environment, we'll use html2canvas or similar library
     // For now, we'll simulate the screenshot capture
-    if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined') {
       // If element is provided, capture just that element
       if (element) {
         // In a real implementation, we would use a library like html2canvas
@@ -68,7 +68,8 @@ export async function captureScreenshot(element?: HTMLElement, _quality: number 
       }
       
       // Return a mock data URL (in a real implementation, this would be the actual screenshot)
-      return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+  void _quality;
+  return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
     } else {
       // In Node.js environment, we might use Puppeteer or similar
       console.log('Screenshot capture not available in this environment');
@@ -144,7 +145,7 @@ export async function saveScreenshotArtifact(
  * @param description - Description of the turn
  * @returns Promise that resolves when the log is saved
  */
-export async function logTurn(turnData: any, turnNumber?: number, description?: string): Promise<void> {
+export async function logTurn(turnData: unknown, turnNumber?: number, description?: string): Promise<void> {
   try {
     const timestamp = new Date().toISOString();
     const id = generateArtifactId('log');
@@ -187,7 +188,7 @@ export async function logTurn(turnData: any, turnNumber?: number, description?: 
  */
 export async function logSessionEvent(
   eventType: string, 
-  data: any, 
+  data: unknown, 
  description?: string
 ): Promise<void> {
   try {
@@ -231,7 +232,25 @@ export async function logSessionEvent(
  * @param newGraph - The new graph state
  * @returns Object containing the differences
  */
-export function generateDiff(oldGraph: Graph, newGraph: Graph): any {
+export interface GraphDiff {
+  timestamp: string;
+  changes: {
+    nodes: {
+      added: ComponentSpec[];
+      removed: ComponentSpec[];
+      updated: ComponentSpec[];
+    };
+    tokens: { from: unknown; to: unknown } | null;
+    meta: { from: unknown; to: unknown } | null;
+  };
+  summary: {
+    nodeCount: { old: number; new: number; change: number };
+    tokensChanged: boolean;
+    metaChanged: boolean;
+  };
+}
+
+export function generateDiff(oldGraph: Graph, newGraph: Graph): GraphDiff {
  try {
     // Compare nodes
     const addedNodes = newGraph.nodes.filter(
@@ -255,7 +274,7 @@ export function generateDiff(oldGraph: Graph, newGraph: Graph): any {
         nodes: {
           added: addedNodes,
           removed: removedNodes,
-          updated: [] as any[], // We could implement a more detailed comparison here
+    updated: [] as ComponentSpec[], // We could implement a more detailed comparison here
         },
         tokens: tokensChanged ? { from: oldGraph.tokens, to: newGraph.tokens } : null,
         meta: metaChanged ? { from: oldGraph.meta, to: newGraph.meta } : null,
@@ -274,12 +293,16 @@ export function generateDiff(oldGraph: Graph, newGraph: Graph): any {
     return diff;
   } catch (error) {
     console.error('Error generating diff:', error);
-    return { 
-      changes: [], 
-      additions: [], 
-      deletions: [],
-      error: error instanceof Error ? error.message : 'Unknown error'
+    const fallback: GraphDiff = {
+      timestamp: new Date().toISOString(),
+      changes: {
+        nodes: { added: [], removed: [], updated: [] },
+        tokens: null,
+        meta: null,
+      },
+      summary: { nodeCount: { old: 0, new: 0, change: 0 }, tokensChanged: false, metaChanged: false },
     };
+    return fallback;
   }
 }
 
@@ -347,7 +370,7 @@ export async function saveDiffArtifact(
  * @returns Promise that resolves to the artifact metadata
  */
 export async function saveArtifact(
-  data: any, 
+  data: unknown, 
   path: string, 
   type: ArtifactType = 'export',
   name?: string,

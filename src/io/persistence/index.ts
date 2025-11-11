@@ -21,7 +21,7 @@ export interface Checkpoint {
 export interface SessionLogEntry {
   timestamp: string;
   type: 'prompt' | 'plan' | 'result' | 'checkpoint' | 'error';
-  data: any;
+  data: unknown;
   turn?: number;
 }
 
@@ -73,19 +73,19 @@ export async function saveUI(graph: Graph, path: string = './ui.json'): Promise<
       const url = window.URL.createObjectURL(blob);
       
       // Create a temporary link to trigger download
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = path.split('/').pop() || 'ui.json';
+      const anchor = document.createElement('a') as HTMLAnchorElement;
+      anchor.href = url;
+      anchor.download = path.split('/').pop() || 'ui.json';
       try {
         if (document.body && typeof document.body.appendChild === 'function') {
-          document.body.appendChild(a as any);
+          document.body.appendChild(anchor);
         }
-        a.click();
+        anchor.click();
         if (document.body && typeof document.body.removeChild === 'function') {
-          try { document.body.removeChild(a as any); } catch (e) { /* ignore */ }
+          try { document.body.removeChild(anchor); } catch (e) { /* ignore */ }
         }
       } catch (err) {
-        try { (a as any).click && (a as any).click(); } catch (ignore) {}
+        try { anchor.click && anchor.click(); } catch (ignore) { void ignore; }
       }
       window.URL.revokeObjectURL(url);
   } else {
@@ -106,7 +106,7 @@ export async function saveUI(graph: Graph, path: string = './ui.json'): Promise<
  */
 export async function loadUI(path: string = './ui.json'): Promise<Graph> {
   try {
-    let graphData: any;
+  let graphData: unknown;
     
     if (typeof window !== 'undefined') {
       // Browser environment - try to load from localStorage first, or fetch from path
@@ -371,7 +371,7 @@ export async function createProject(projectName: string): Promise<void> {
  * @param projectName - Name of the project
  * @returns Promise that resolves to the project structure
  */
-export async function getProject(projectName: string): Promise<any> {
+export async function getProject(projectName: string): Promise<Record<string, unknown> | null> {
   try {
     const projectKey = `frozenfigma-project-${projectName}`;
     const projectStructure = localStorage.getItem(projectKey);
@@ -380,7 +380,7 @@ export async function getProject(projectName: string): Promise<any> {
       throw new Error(`Project ${projectName} not found`);
     }
     
-    return JSON.parse(projectStructure);
+  return JSON.parse(projectStructure) as Record<string, unknown>;
   } catch (error) {
     console.error(`Error getting project ${projectName}:`, error);
     return null;
