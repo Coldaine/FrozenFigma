@@ -136,8 +136,8 @@ describe('Gate System Tests', () => {
       
       const result = runLint(graph);
       expect(result.diagnostics.length).toBeGreaterThan(0);
-      expect(result.diagnostics.some((d: any) => d.gate === 'lint')).toBe(true);
-      expect(result.diagnostics.some((d: any) => d.severity === 'warning')).toBe(true);
+      expect(result.diagnostics.some((d) => d.gate === 'lint')).toBe(true);
+      expect(result.diagnostics.some((d) => d.severity === 'warning')).toBe(true);
     });
 
     it('should generate appropriate diagnostics for type issues', () => {
@@ -154,8 +154,8 @@ describe('Gate System Tests', () => {
       
       const result = runTypeCheck(graph);
       expect(result.diagnostics.length).toBeGreaterThan(0);
-      expect(result.diagnostics.some((d: any) => d.gate === 'types')).toBe(true);
-      expect(result.diagnostics.some((d: any) => d.severity === 'error')).toBe(true);
+      expect(result.diagnostics.some((d) => d.gate === 'types')).toBe(true);
+      expect(result.diagnostics.some((d) => d.severity === 'error')).toBe(true);
     });
 
     it('should aggregate diagnostics from all gates', async () => {
@@ -163,11 +163,11 @@ describe('Gate System Tests', () => {
       const result = await runValidationGate(graph);
       
       // Should have diagnostics from multiple gates
-      const gateTypes = [...new Set(result.diagnostics.map((d: any) => d.gate))];
+      const gateTypes = [...new Set(result.diagnostics.map((d) => d.gate))];
       expect(gateTypes.length).toBeGreaterThan(1);
       
       // Should have both errors and warnings
-      const severities = [...new Set(result.diagnostics.map((d: any) => d.severity))];
+      const severities = [...new Set(result.diagnostics.map((d) => d.severity))];
       expect(severities).toContain('error');
       expect(severities).toContain('warning');
     });

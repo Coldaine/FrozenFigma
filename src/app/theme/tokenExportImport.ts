@@ -273,7 +273,7 @@ function exportAsYAML(tokens: TokenSet, options: Required<ExportOptions>): strin
  * @param minify - Whether to minify the output
  * @returns Object as YAML string
  */
-function convertToYAML(obj: any, indentLevel: number, minify: boolean): string {
+function convertToYAML(obj: unknown, indentLevel: number, minify: boolean): string {
   if (obj === null || obj === undefined) {
     return 'null';
   }
@@ -317,7 +317,7 @@ function convertToYAML(obj: any, indentLevel: number, minify: boolean): string {
     
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
-      const value = obj[key];
+      const value = (obj as Record<string, unknown>)[key];
       
       if (!minify) {
         if (i > 0) output += '\n';
@@ -330,7 +330,7 @@ function convertToYAML(obj: any, indentLevel: number, minify: boolean): string {
     return output;
   }
   
-  return obj.toString();
+  return String(obj);
 }
 
 /**
@@ -496,10 +496,10 @@ function yamlToJSON(yaml: string): string {
  * @param yaml - YAML string to parse
  * @returns Parsed object
  */
-function parseYAML(yaml: string): any {
+function parseYAML(yaml: string): Record<string, unknown> {
   // This is a very basic implementation - in a real implementation, you would use a library
   const lines = yaml.split('\n').filter(line => line.trim() !== '' && !line.trim().startsWith('#'));
-  const result: any = {};
+  const result: Record<string, unknown> = {};
   
   for (const line of lines) {
     const trimmedLine = line.trim();

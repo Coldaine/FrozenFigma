@@ -16,7 +16,7 @@ import { TokenSet, EnhancedTokenSet } from '../../schema';
  * @param tokens - The token set to validate
  * @returns Validation result with success status and errors
  */
-export function validateTokens(tokens: any): { success: boolean; errors?: string[] } {
+export function validateTokens(tokens: unknown): { success: boolean; errors?: string[] } {
   try {
     // Basic validation to check if tokens have required properties
     if (!tokens || typeof tokens !== 'object') {
@@ -24,13 +24,14 @@ export function validateTokens(tokens: any): { success: boolean; errors?: string
     }
 
     const errors: string[] = [];
+    const tokenObj = tokens as Record<string, unknown>;
 
     // Validate colors if present
-    if (tokens.colors) {
-      if (typeof tokens.colors !== 'object') {
+    if (tokenObj.colors) {
+      if (typeof tokenObj.colors !== 'object') {
         errors.push('Colors must be an object');
       } else {
-        for (const [key, value] of Object.entries(tokens.colors)) {
+        for (const [key, value] of Object.entries(tokenObj.colors)) {
           if (typeof value !== 'string') {
             errors.push(`Color token "${key}" must be a string`);
           } else if (!isValidColor(value)) {
@@ -41,11 +42,11 @@ export function validateTokens(tokens: any): { success: boolean; errors?: string
     }
 
     // Validate spacing if present
-    if (tokens.spacing) {
-      if (typeof tokens.spacing !== 'object') {
+    if (tokenObj.spacing) {
+      if (typeof tokenObj.spacing !== 'object') {
         errors.push('Spacing must be an object');
       } else {
-        for (const [key, value] of Object.entries(tokens.spacing)) {
+        for (const [key, value] of Object.entries(tokenObj.spacing)) {
           if (typeof value !== 'number') {
             errors.push(`Spacing token "${key}" must be a number`);
           } else if (value < 0) {
@@ -56,28 +57,29 @@ export function validateTokens(tokens: any): { success: boolean; errors?: string
     }
 
     // Validate typography if present
-    if (tokens.typography) {
-      if (typeof tokens.typography !== 'object') {
+    if (tokenObj.typography) {
+      if (typeof tokenObj.typography !== 'object') {
         errors.push('Typography must be an object');
       } else {
-        if (tokens.typography.fontFamily && typeof tokens.typography.fontFamily !== 'string') {
+        const typography = tokenObj.typography as Record<string, unknown>;
+        if (typography.fontFamily && typeof typography.fontFamily !== 'string') {
           errors.push('Typography fontFamily must be a string');
         }
         
-        if (tokens.typography.sizes && typeof tokens.typography.sizes !== 'object') {
+        if (typography.sizes && typeof typography.sizes !== 'object') {
           errors.push('Typography sizes must be an object');
-        } else if (tokens.typography.sizes) {
-          for (const [key, value] of Object.entries(tokens.typography.sizes)) {
+        } else if (typography.sizes) {
+          for (const [key, value] of Object.entries(typography.sizes)) {
             if (typeof value !== 'number') {
               errors.push(`Typography size token "${key}" must be a number`);
             }
           }
         }
         
-        if (tokens.typography.weights && typeof tokens.typography.weights !== 'object') {
+        if (typography.weights && typeof typography.weights !== 'object') {
           errors.push('Typography weights must be an object');
-        } else if (tokens.typography.weights) {
-          for (const [key, value] of Object.entries(tokens.typography.weights)) {
+        } else if (typography.weights) {
+          for (const [key, value] of Object.entries(typography.weights)) {
             if (typeof value !== 'number') {
               errors.push(`Typography weight token "${key}" must be a number`);
             } else if (value < 100 || value > 900 || value % 100 !== 0) {
@@ -89,11 +91,11 @@ export function validateTokens(tokens: any): { success: boolean; errors?: string
     }
 
     // Validate radius if present
-    if (tokens.radius) {
-      if (typeof tokens.radius !== 'object') {
+    if (tokenObj.radius) {
+      if (typeof tokenObj.radius !== 'object') {
         errors.push('Radius must be an object');
       } else {
-        for (const [key, value] of Object.entries(tokens.radius)) {
+        for (const [key, value] of Object.entries(tokenObj.radius)) {
           if (typeof value !== 'number') {
             errors.push(`Radius token "${key}" must be a number`);
           } else if (value < 0) {
@@ -132,7 +134,7 @@ function isValidColor(color: string): boolean {
  * @param tokens - The enhanced token set to validate
  * @returns Validation result with success status and errors
  */
-export function validateEnhancedTokens(tokens: any): { success: boolean; errors?: string[] } {
+export function validateEnhancedTokens(tokens: unknown): { success: boolean; errors?: string[] } {
   try {
     if (!tokens || typeof tokens !== 'object') {
       return { success: false, errors: ['Tokens must be an object'] };
@@ -198,7 +200,7 @@ export function validateEnhancedTokens(tokens: any): { success: boolean; errors?
 /**
  * Validates semantic color tokens
  */
-function validateSemanticColorTokens(colors: any): { success: boolean; errors?: string[] } {
+function validateSemanticColorTokens(colors: unknown): { success: boolean; errors?: string[] } {
   const errors: string[] = [];
   
   if (typeof colors !== 'object') {
@@ -222,7 +224,7 @@ function validateSemanticColorTokens(colors: any): { success: boolean; errors?: 
 /**
  * Validates semantic spacing tokens
  */
-function validateSemanticSpacingTokens(spacing: any): { success: boolean; errors?: string[] } {
+function validateSemanticSpacingTokens(spacing: unknown): { success: boolean; errors?: string[] } {
   const errors: string[] = [];
   
   if (typeof spacing !== 'object') {
@@ -246,7 +248,7 @@ function validateSemanticSpacingTokens(spacing: any): { success: boolean; errors
 /**
  * Validates semantic typography tokens
  */
-function validateSemanticTypographyTokens(typography: any): { success: boolean; errors?: string[] } {
+function validateSemanticTypographyTokens(typography: unknown): { success: boolean; errors?: string[] } {
   const errors: string[] = [];
   
   if (typeof typography !== 'object') {
@@ -298,7 +300,7 @@ function validateSemanticTypographyTokens(typography: any): { success: boolean; 
 /**
  * Validates semantic radius tokens
  */
-function validateSemanticRadiusTokens(radius: any): { success: boolean; errors?: string[] } {
+function validateSemanticRadiusTokens(radius: unknown): { success: boolean; errors?: string[] } {
   const errors: string[] = [];
   
   if (typeof radius !== 'object') {
@@ -322,7 +324,7 @@ function validateSemanticRadiusTokens(radius: any): { success: boolean; errors?:
 /**
  * Validates semantic shadow tokens
  */
-function validateSemanticShadowTokens(shadows: any): { success: boolean; errors?: string[] } {
+function validateSemanticShadowTokens(shadows: unknown): { success: boolean; errors?: string[] } {
   const errors: string[] = [];
   
   if (typeof shadows !== 'object') {
@@ -344,7 +346,7 @@ function validateSemanticShadowTokens(shadows: any): { success: boolean; errors?
 /**
  * Validates semantic transition tokens
  */
-function validateSemanticTransitionTokens(transitions: any): { success: boolean; errors?: string[] } {
+function validateSemanticTransitionTokens(transitions: unknown): { success: boolean; errors?: string[] } {
   const errors: string[] = [];
   
   if (typeof transitions !== 'object') {
@@ -483,7 +485,7 @@ export function enhancedTokensToCSSVariables(tokens: EnhancedTokenSet, prefix: s
     // Size tokens
     const sizeKeys = Object.keys(tokens.typography).filter(key => key.startsWith('size-'));
     for (const key of sizeKeys) {
-      const value = (tokens.typography as any)[key];
+      const value = (tokens.typography as Record<string, unknown>)[key];
       if (typeof value === 'number') {
         cssVars[`--${prefix}-${key}`] = `${value}px`;
       }
@@ -492,7 +494,7 @@ export function enhancedTokensToCSSVariables(tokens: EnhancedTokenSet, prefix: s
     // Weight tokens
     const weightKeys = Object.keys(tokens.typography).filter(key => key.startsWith('weight-'));
     for (const key of weightKeys) {
-      const value = (tokens.typography as any)[key];
+      const value = (tokens.typography as Record<string, unknown>)[key];
       if (typeof value === 'number') {
         cssVars[`--${prefix}-${key}`] = `${value}`;
       }
@@ -501,7 +503,7 @@ export function enhancedTokensToCSSVariables(tokens: EnhancedTokenSet, prefix: s
     // Line height tokens
     const lineHeightKeys = Object.keys(tokens.typography).filter(key => key.startsWith('line-height-'));
     for (const key of lineHeightKeys) {
-      const value = (tokens.typography as any)[key];
+      const value = (tokens.typography as Record<string, unknown>)[key];
       if (typeof value === 'number') {
         cssVars[`--${prefix}-${key}`] = `${value}`;
       }
@@ -510,7 +512,7 @@ export function enhancedTokensToCSSVariables(tokens: EnhancedTokenSet, prefix: s
     // Letter spacing tokens
     const letterSpacingKeys = Object.keys(tokens.typography).filter(key => key.startsWith('letter-spacing-'));
     for (const key of letterSpacingKeys) {
-      const value = (tokens.typography as any)[key];
+      const value = (tokens.typography as Record<string, unknown>)[key];
       if (typeof value === 'number') {
         cssVars[`--${prefix}-${key}`] = `${value}`;
       }
@@ -536,7 +538,7 @@ export function enhancedTokensToCSSVariables(tokens: EnhancedTokenSet, prefix: s
     // Duration tokens
     const durationKeys = Object.keys(tokens.transitions).filter(key => key.includes('duration'));
     for (const key of durationKeys) {
-      const value = (tokens.transitions as any)[key];
+      const value = (tokens.transitions as Record<string, unknown>)[key];
       if (typeof value === 'number') {
         cssVars[`--${prefix}-${key}`] = `${value}ms`;
       }
@@ -545,7 +547,7 @@ export function enhancedTokensToCSSVariables(tokens: EnhancedTokenSet, prefix: s
     // Easing tokens
     const easingKeys = Object.keys(tokens.transitions).filter(key => key.includes('easing'));
     for (const key of easingKeys) {
-      const value = (tokens.transitions as any)[key];
+      const value = (tokens.transitions as Record<string, unknown>)[key];
       if (typeof value === 'string') {
         cssVars[`--${prefix}-${key}`] = value;
       }

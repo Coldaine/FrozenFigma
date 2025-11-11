@@ -109,15 +109,15 @@ export function applyTokenOverrides(baseTokens: TokenSet, overrides: Partial<Tok
  * @param fallback - Fallback value if token is not found
  * @returns Resolved token value or fallback
  */
-export function resolveTokenValue(tokens: TokenSet, tokenPath: string, fallback?: any) {
+export function resolveTokenValue(tokens: TokenSet, tokenPath: string, fallback?: unknown): unknown {
   // Split the path by dots to navigate the object
   const pathParts = tokenPath.split('.');
   
-  let current: any = tokens;
+  let current: unknown = tokens;
   
   for (const part of pathParts) {
     if (current && typeof current === 'object') {
-      current = current[part];
+      current = (current as Record<string, unknown>)[part];
     } else {
       return fallback;
     }
@@ -133,7 +133,7 @@ export function resolveTokenValue(tokens: TokenSet, tokenPath: string, fallback?
  * @returns Function that can resolve tokens from this set
  */
 export function createTokenResolver(tokens: TokenSet) {
-  return (tokenPath: string, fallback?: any) => resolveTokenValue(tokens, tokenPath, fallback);
+  return (tokenPath: string, fallback?: unknown) => resolveTokenValue(tokens, tokenPath, fallback);
 }
 
 /**

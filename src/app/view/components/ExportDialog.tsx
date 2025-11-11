@@ -113,7 +113,7 @@ const ExportDialog: React.FC<ExportDialogProps> = ({ isOpen, onClose }) => {
             </label>
             <select
               value={exportFormat}
-              onChange={(e) => setExportFormat(e.target.value as any)}
+              onChange={(e) => setExportFormat(e.target.value as 'tsx' | 'jsx' | 'vue' | 'svelte')}
               className="w-full p-2 border-gray-300 rounded-md"
             >
               <option value="tsx">React TSX</option>
@@ -129,7 +129,7 @@ const ExportDialog: React.FC<ExportDialogProps> = ({ isOpen, onClose }) => {
             </label>
             <select
               value={exportType}
-              onChange={(e) => setExportType(e.target.value as any)}
+              onChange={(e) => setExportType(e.target.value as 'all' | 'selected' | 'current')}
               className="w-full p-2 border border-gray-300 rounded-md"
             >
               <option value="all">All Components</option>

@@ -64,7 +64,7 @@ const Inspector: React.FC = () => {
   const handlePropertyChange = useCallback((
     componentId: string,
     propPath: string,
-    value: any
+    value: unknown
   ) => {
     const component = selectors.getComponentById(componentId);
     if (!component) return;

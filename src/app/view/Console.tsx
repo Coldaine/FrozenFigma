@@ -233,7 +233,7 @@ const Console: React.FC = () => {
           {/* Filter buttons */}
           <select
             value={filterType}
-            onChange={(e) => setFilterType(e.target.value as any)}
+            onChange={(e) => setFilterType(e.target.value as 'all' | LogEntry['type'])}
             className="px-2 py-1 text-xs bg-background border border-border rounded-md text-text"
           >
             <option value="all">All</option>
