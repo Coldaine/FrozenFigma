@@ -141,45 +141,46 @@ export function validateEnhancedTokens(tokens: unknown): { success: boolean; err
     }
 
     const errors: string[] = [];
+    const tokenObj = tokens as Record<string, unknown>;
 
     // Validate each token category
-    if (tokens.colors) {
-      const colorValidation = validateSemanticColorTokens(tokens.colors);
+    if (tokenObj.colors) {
+      const colorValidation = validateSemanticColorTokens(tokenObj.colors);
       if (!colorValidation.success) {
         errors.push(...(colorValidation.errors || []));
       }
     }
 
-    if (tokens.spacing) {
-      const spacingValidation = validateSemanticSpacingTokens(tokens.spacing);
+    if (tokenObj.spacing) {
+      const spacingValidation = validateSemanticSpacingTokens(tokenObj.spacing);
       if (!spacingValidation.success) {
         errors.push(...(spacingValidation.errors || []));
       }
     }
 
-    if (tokens.typography) {
-      const typographyValidation = validateSemanticTypographyTokens(tokens.typography);
+    if (tokenObj.typography) {
+      const typographyValidation = validateSemanticTypographyTokens(tokenObj.typography);
       if (!typographyValidation.success) {
         errors.push(...(typographyValidation.errors || []));
       }
     }
 
-    if (tokens.radius) {
-      const radiusValidation = validateSemanticRadiusTokens(tokens.radius);
+    if (tokenObj.radius) {
+      const radiusValidation = validateSemanticRadiusTokens(tokenObj.radius);
       if (!radiusValidation.success) {
         errors.push(...(radiusValidation.errors || []));
       }
     }
 
-    if (tokens.shadows) {
-      const shadowValidation = validateSemanticShadowTokens(tokens.shadows);
+    if (tokenObj.shadows) {
+      const shadowValidation = validateSemanticShadowTokens(tokenObj.shadows);
       if (!shadowValidation.success) {
         errors.push(...(shadowValidation.errors || []));
       }
     }
 
-    if (tokens.transitions) {
-      const transitionValidation = validateSemanticTransitionTokens(tokens.transitions);
+    if (tokenObj.transitions) {
+      const transitionValidation = validateSemanticTransitionTokens(tokenObj.transitions);
       if (!transitionValidation.success) {
         errors.push(...(transitionValidation.errors || []));
       }
@@ -203,7 +204,7 @@ export function validateEnhancedTokens(tokens: unknown): { success: boolean; err
 function validateSemanticColorTokens(colors: unknown): { success: boolean; errors?: string[] } {
   const errors: string[] = [];
   
-  if (typeof colors !== 'object') {
+  if (!colors || typeof colors !== 'object') {
     return { success: false, errors: ['Color tokens must be an object'] };
   }
   
@@ -227,7 +228,7 @@ function validateSemanticColorTokens(colors: unknown): { success: boolean; error
 function validateSemanticSpacingTokens(spacing: unknown): { success: boolean; errors?: string[] } {
   const errors: string[] = [];
   
-  if (typeof spacing !== 'object') {
+  if (!spacing || typeof spacing !== 'object') {
     return { success: false, errors: ['Spacing tokens must be an object'] };
   }
   
@@ -251,28 +252,30 @@ function validateSemanticSpacingTokens(spacing: unknown): { success: boolean; er
 function validateSemanticTypographyTokens(typography: unknown): { success: boolean; errors?: string[] } {
   const errors: string[] = [];
   
-  if (typeof typography !== 'object') {
+  if (!typography || typeof typography !== 'object') {
     return { success: false, errors: ['Typography tokens must be an object'] };
   }
   
- if (typography.fontFamily && typeof typography.fontFamily !== 'string') {
+  const typographyObj = typography as Record<string, unknown>;
+  
+ if (typographyObj.fontFamily && typeof typographyObj.fontFamily !== 'string') {
     errors.push('Typography fontFamily must be a string');
   }
   
-  if (typography.sizes && typeof typography.sizes !== 'object') {
+  if (typographyObj.sizes && typeof typographyObj.sizes !== 'object') {
     errors.push('Typography sizes must be an object');
-  } else if (typography.sizes) {
-    for (const [key, value] of Object.entries(typography.sizes)) {
+  } else if (typographyObj.sizes) {
+    for (const [key, value] of Object.entries(typographyObj.sizes)) {
       if (typeof value !== 'number') {
         errors.push(`Typography size token "${key}" must be a number`);
       }
     }
  }
   
-  if (typography.weights && typeof typography.weights !== 'object') {
+  if (typographyObj.weights && typeof typographyObj.weights !== 'object') {
     errors.push('Typography weights must be an object');
-  } else if (typography.weights) {
-    for (const [key, value] of Object.entries(typography.weights)) {
+  } else if (typographyObj.weights) {
+    for (const [key, value] of Object.entries(typographyObj.weights)) {
       if (typeof value !== 'number') {
         errors.push(`Typography weight token "${key}" must be a number`);
       } else if (value < 100 || value > 900 || value % 100 !== 0) {
@@ -281,10 +284,10 @@ function validateSemanticTypographyTokens(typography: unknown): { success: boole
     }
   }
   
-  if (typography.lineHeights && typeof typography.lineHeights !== 'object') {
+  if (typographyObj.lineHeights && typeof typographyObj.lineHeights !== 'object') {
     errors.push('Typography lineHeights must be an object');
-  } else if (typography.lineHeights) {
-    for (const [key, value] of Object.entries(typography.lineHeights)) {
+  } else if (typographyObj.lineHeights) {
+    for (const [key, value] of Object.entries(typographyObj.lineHeights)) {
       if (typeof value !== 'number') {
         errors.push(`Typography lineHeight token "${key}" must be a number`);
       }
@@ -303,7 +306,7 @@ function validateSemanticTypographyTokens(typography: unknown): { success: boole
 function validateSemanticRadiusTokens(radius: unknown): { success: boolean; errors?: string[] } {
   const errors: string[] = [];
   
-  if (typeof radius !== 'object') {
+  if (!radius || typeof radius !== 'object') {
     return { success: false, errors: ['Radius tokens must be an object'] };
   }
   
@@ -327,7 +330,7 @@ function validateSemanticRadiusTokens(radius: unknown): { success: boolean; erro
 function validateSemanticShadowTokens(shadows: unknown): { success: boolean; errors?: string[] } {
   const errors: string[] = [];
   
-  if (typeof shadows !== 'object') {
+  if (!shadows || typeof shadows !== 'object') {
     return { success: false, errors: ['Shadow tokens must be an object'] };
   }
   
@@ -349,7 +352,7 @@ function validateSemanticShadowTokens(shadows: unknown): { success: boolean; err
 function validateSemanticTransitionTokens(transitions: unknown): { success: boolean; errors?: string[] } {
   const errors: string[] = [];
   
-  if (typeof transitions !== 'object') {
+  if (!transitions || typeof transitions !== 'object') {
     return { success: false, errors: ['Transition tokens must be an object'] };
   }
   
