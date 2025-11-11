@@ -314,6 +314,7 @@ function detectCircularReferences(graph: Graph): Diagnostic[] {
  * @returns TypeScript compiler results
  */
 export async function runTypeScriptCompiler(_filePaths?: string[]): Promise<{ passed: boolean; diagnostics: Diagnostic[] }> {
+  void _filePaths;
   // In a real implementation, this would run the TypeScript compiler programmatically
   // For now, we'll return an empty result as a placeholder
  const diagnostics: Diagnostic[] = [];

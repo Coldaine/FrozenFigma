@@ -302,6 +302,7 @@ async function runUtilityUnitTests(): Promise<Diagnostic[]> {
  * @returns Vitest results
  */
 export async function runVitest(_filePaths?: string[]): Promise<{ passed: boolean; diagnostics: Diagnostic[] }> {
+  void _filePaths;
   // In a real implementation, this would run Vitest programmatically
   // For now, we'll return an empty result as a placeholder
   const diagnostics: Diagnostic[] = [];

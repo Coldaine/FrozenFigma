@@ -255,7 +255,7 @@ export class Skeletonizer {
     const skeletonMatches = SkeletonPlanner.matchPromptToSkeletons(prompt);
     const allComponents: ComponentSpec[] = [];
     
-    let currentY = baseY;
+    const currentY = baseY;
     const rowHeight = 300; // Approximate height for layout
     
     for (let i = 0; i < skeletonMatches.length; i++) {

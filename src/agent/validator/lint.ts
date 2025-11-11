@@ -221,6 +221,7 @@ export function runLint(graph: Graph): { passed: boolean; diagnostics: Diagnosti
  * @returns ESLint results
  */
 export async function runESLint(_filePaths?: string[]): Promise<{ passed: boolean; diagnostics: Diagnostic[] }> {
+  void _filePaths;
   // In a real implementation, this would run ESLint programmatically
   // For now, we'll return an empty result as a placeholder
   const diagnostics: Diagnostic[] = [];

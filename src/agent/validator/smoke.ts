@@ -243,6 +243,7 @@ function checkOverlap(a: { x: number; y: number; w: number; h: number }, b: { x:
  * @returns Browser test results
  */
 export async function runHeadlessBrowserTests(_graph: Graph): Promise<{ passed: boolean; diagnostics: Diagnostic[] }> {
+  void _graph;
   // In a real implementation, this would run tests in a headless browser (like Puppeteer or Playwright)
   // For now, we'll return an empty result as a placeholder
   const diagnostics: Diagnostic[] = [];

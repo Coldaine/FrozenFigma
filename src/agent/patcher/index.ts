@@ -82,7 +82,7 @@ export function applyPatch(graph: Graph, plan: EditPlan): PatchResult {
  */
 function applyCommand(graph: Graph, command: Command): PatchResult {
   const errors: string[] = [];
-  let modifiedGraph = { ...graph, nodes: [...graph.nodes] };
+  const modifiedGraph = { ...graph, nodes: [...graph.nodes] };
 
   try {
     if (isAddCommand(command)) {

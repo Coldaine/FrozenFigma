@@ -100,9 +100,10 @@ export async function runValidationGates(graph: Graph, options: GateRunnerOption
   const executionTime = Date.now() - startTime;
   
   // Overall result passes only if all enabled gates pass
-  const enabledGateResults = gates ? 
-    Object.entries(gateResults).filter(([name]) => gates.includes(name as any)) :
-    Object.entries(gateResults);
+  const gateEntries = Object.entries(gateResults) as Array<['schema' | 'lint' | 'types' | 'unit' | 'smoke', boolean]>;
+  const enabledGateResults = gates
+    ? gateEntries.filter(([name]) => gates.includes(name))
+    : gateEntries;
     
   const passed = enabledGateResults.every(([, result]) => result);
 

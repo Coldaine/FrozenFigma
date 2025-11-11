@@ -19,7 +19,7 @@ interface Intent {
   componentType?: ComponentType;
   targetId?: string;
   targetName?: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
   position?: { x: number; y: number; region?: string };
   count?: number;
   description: string;
@@ -39,8 +39,8 @@ const PATTERNS = {
   
   // Component types
   button: /\bbutton\b/i,
-  slider: /\bslider\b/i,
-  toggle: /\btoggle\b/i,
+  slider: /\bslider(?:s)?\b/i,
+  toggle: /\btoggle(?:s)?\b/i,
   tabs: /\btabs?\b/i,
   modal: /\bmodal\b/i,
   tray: /\btray\b/i,
@@ -120,7 +120,7 @@ function extractIntent(prompt: string): Intent {
   const region = regionMatch ? regionMatch[1].toLowerCase() : 'main';
   
   // Extract properties from prompt (simplified for now)
-  const properties: Record<string, any> = {};
+  const properties: Record<string, unknown> = {};
   
   // Special case: settings panel properties
   if (componentType === 'settings-panel') {
@@ -184,8 +184,18 @@ function intentToCommands(intent: Intent): Command[] {
       
       // Special case: settings panel
       if (intent.componentType === 'settings-panel') {
-        const sliderCount = intent.properties?.sliderCount || 3;
-        const toggleCount = intent.properties?.toggleCount || 2;
+        const sliderCount = (() => {
+          const v = intent.properties?.sliderCount;
+          if (typeof v === 'number') return v;
+          if (typeof v === 'string') return parseInt(v, 10);
+          return 3;
+        })();
+        const toggleCount = (() => {
+          const v = intent.properties?.toggleCount;
+          if (typeof v === 'number') return v;
+          if (typeof v === 'string') return parseInt(v, 10);
+          return 2;
+        })();
         
         const settingsComponents = generateSettingsPanel({
           sliderCount,
