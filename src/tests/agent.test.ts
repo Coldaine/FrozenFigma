@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createEmptyGraph, createComponent } from '../schema';
+import { createEmptyGraph, createComponent, Command } from '../schema';
 import { parseIntent } from '../agent/planner';
 import { applyPatch } from '../agent/patcher';
 import { runValidationGate } from '../agent/validator';
@@ -100,7 +100,7 @@ describe('Agent System', () => {
     it('should handle errors gracefully', () => {
       const plan = parseIntent('Add a button');
       // Corrupt the plan to cause an error
-      plan.operations[0] = { ...plan.operations[0], id: '' } as any;
+      plan.operations[0] = { ...plan.operations[0], id: '' } as unknown as Command;
       
       const result = applyPatch(graph, plan);
       
@@ -138,7 +138,7 @@ describe('Agent System', () => {
       const result = await runValidationGate(graph);
       
       expect(result.passed).toBe(false);
-      expect(result.diagnostics.some((d: any) => d.message.includes('Duplicate'))).toBe(true);
+      expect(result.diagnostics.some((d: { message: string }) => d.message.includes('Duplicate'))).toBe(true);
     });
 
     it('should detect out of bounds components', async () => {
@@ -149,7 +149,7 @@ describe('Agent System', () => {
       const result = await runValidationGate(graph);
       
       expect(result.passed).toBe(false);
-      expect(result.diagnostics.some((d: any) => d.message.includes('out of bounds'))).toBe(true);
+      expect(result.diagnostics.some((d: { message: string }) => d.message.includes('out of bounds'))).toBe(true);
     });
   });
 

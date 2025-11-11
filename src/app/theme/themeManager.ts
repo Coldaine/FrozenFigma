@@ -259,14 +259,14 @@ export class ThemeManager {
     
     // Navigate to the token and update its value
     const pathParts = tokenPath.split('.');
-    let current: any = updatedTokens;
+    let current: Record<string, unknown> = updatedTokens as unknown as Record<string, unknown>;
     
     for (let i = 0; i < pathParts.length - 1; i++) {
       const part = pathParts[i];
       if (current[part] === undefined) {
         current[part] = {};
       }
-      current = current[part];
+      current = current[part] as Record<string, unknown>;
     }
     
     // Update the final value

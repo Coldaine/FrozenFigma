@@ -1,6 +1,6 @@
 import { Graph } from '../../schema';
 import { Diagnostic } from '.';
-import { renderComponent } from '../../app/view/components/UIComponents';
+import { renderComponent } from '../../app/view/components/renderComponent';
 
 /**
  * Run smoke tests to verify basic UI functionality.

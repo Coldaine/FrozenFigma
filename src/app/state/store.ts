@@ -409,7 +409,7 @@ export const useStore = create<FrozenFigmaStore>()(
                 actions.addComponent(command.component);
                 break;
               case 'UPDATE':
-                actions.updateComponent(command.targetId, command.updates as any);
+                actions.updateComponent(command.targetId, command.updates as Partial<ComponentSpec>);
                 break;
               case 'REMOVE':
                 actions.removeComponent(command.targetId, command.cascade);

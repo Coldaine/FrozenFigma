@@ -2,7 +2,7 @@ import { Graph, ComponentType } from '../../schema';
 import { Diagnostic } from '.';
 import { runValidationGate } from '.';
 import { createTestGraph, MockFactory, InteractionSimulator } from '../../tests/testUtils';
-import { renderComponent } from '../../app/view/components/UIComponents';
+import { renderComponent } from '../../app/view/components/renderComponent';
 
 /**
  * Run unit tests on the graph and related components.
