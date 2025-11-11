@@ -33,7 +33,7 @@ export interface UseTokenStylesOptions extends StyleConversionOptions {
 export function useTokenStyles(
   componentType: ComponentTypeForStyle = 'generic',
   options?: UseTokenStylesOptions
-): Record<string, any> {
+): Record<string, unknown> {
   const opts: Required<UseTokenStylesOptions> = useMemo(() => ({
     componentType,
     additionalStyles: options?.additionalStyles || {},
@@ -45,7 +45,7 @@ export function useTokenStyles(
   
   // Get initial tokens
  const initialTokens = getCurrentTokens() || getDefaultTokens();
-  const [styles, setStyles] = useState<Record<string, any>>(
+  const [styles, setStyles] = useState<Record<string, unknown>>(
     tokensToStyles(initialTokens, opts)
  );
   
@@ -306,7 +306,7 @@ function getDefaultTokens(): TokenSet {
  * @param options - Styling options
  * @returns Component with token-based styles applied
  */
-export function withTokenStyles<T extends Record<string, any>>(
+export function withTokenStyles<T extends Record<string, unknown> & { style?: React.CSSProperties }>(
   Component: React.ComponentType<T>,
   componentType: ComponentTypeForStyle = 'generic',
  options?: UseTokenStylesOptions
@@ -314,7 +314,11 @@ export function withTokenStyles<T extends Record<string, any>>(
   return function TokenStyledComponent(props: T) {
     const styles = useTokenStyles(componentType, options);
     
-    return <Component {...props} style={{ ...props.style, ...styles }} />;
+    const mergedStyle: React.CSSProperties = {
+      ...(props.style as React.CSSProperties || {}),
+      ...(styles as React.CSSProperties || {}),
+    };
+  return <Component {...(props as T)} style={mergedStyle} />;
   };
 }
 
@@ -349,17 +353,20 @@ export function useTokenValue(tokenPath: string, fallback?: string | number): st
   // Split the path by dots to navigate the object
   const pathParts = tokenPath.split('.');
   
-  let current: any = tokens;
+  let current: unknown = tokens;
   
   for (const part of pathParts) {
     if (current && typeof current === 'object') {
-      current = current[part];
+      current = (current as Record<string, unknown>)[part];
     } else {
       return fallback;
     }
   }
   
-  return current !== undefined ? current : fallback;
+  if (typeof current === 'string' || typeof current === 'number') {
+    return current as string | number;
+  }
+  return fallback;
 }
 
 /**
@@ -370,7 +377,7 @@ export function useTokenValue(tokenPath: string, fallback?: string | number): st
  */
 export function useConditionalTokenStyles(
   conditions: Array<{ condition: boolean; componentType: ComponentTypeForStyle; options?: StyleConversionOptions }>
-): Record<string, any> {
+): Record<string, unknown> {
   // Get current tokens once at the top level (proper hook usage)
   const [tokens, setTokens] = useState<TokenSet | null>(() => getCurrentTokens() || getDefaultTokens());
   
@@ -387,7 +394,7 @@ export function useConditionalTokenStyles(
   }, []);
   
   // Build styles from conditions using pure converter (no hooks in loop)
-  const allStyles: Record<string, any> = {};
+  const allStyles: Record<string, unknown> = {};
   const currentTokens = tokens || getDefaultTokens();
   
   for (const { condition, componentType, options } of conditions) {
@@ -418,13 +425,13 @@ export function useResponsiveTokenStyles(
     xl?: ComponentTypeForStyle;
   },
   options?: UseTokenStylesOptions
-): Record<string, any> {
+): Record<string, unknown> {
   const baseStyles = useTokenStyles(baseComponentType, options);
   
   // For responsive styles, we'd typically use CSS media queries
   // This is a simplified implementation - a real implementation would require
  // more sophisticated responsive handling
-  const responsiveStyles: Record<string, any> = { ...baseStyles };
+  const responsiveStyles: Record<string, unknown> = { ...baseStyles };
   
   // In a real implementation, we'd add media query styles here based on _responsiveRules
   // For now, we'll just return the base styles

@@ -409,11 +409,12 @@ function parseCSSVariable(varName: string, value: string, tokens: Partial<TokenS
       if (!tokens.shadows) tokens.shadows = {};
       tokens.shadows[tokenName] = value.trim();
       break;
-    case 'transition':
+    case 'transition': {
       if (!tokens.transitions) tokens.transitions = {};
       const numValue = parseFloat(value.trim());
       tokens.transitions[tokenName] = isNaN(numValue) ? value.trim() : numValue;
       break;
+    }
   }
 }
 

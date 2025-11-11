@@ -381,7 +381,7 @@ export function generateCategorizedCSSVariables(tokens: TokenSet | EnhancedToken
  */
 function generateCategoryCSSVariables(
   category: string,
-  tokens: Record<string, any>,
+  tokens: Record<string, unknown>,
   prefix: string,
   options: Required<CSSVariableOptions>
 ): string {
@@ -396,13 +396,13 @@ function generateCategoryCSSVariables(
   const entries = Object.entries(tokens);
   
   for (let i = 0; i < entries.length; i++) {
-    const [key, value] = entries[i];
+  const [key, value] = entries[i];
     const cssVarName = `--${prefix}-${category}-${key}`;
     
     if (options.minify) {
-      output += `${cssVarName}:${value};`;
+      output += `${cssVarName}:${String(value)};`;
     } else {
-      output += ` ${cssVarName}: ${value};`;
+      output += ` ${cssVarName}: ${String(value)};`;
       if (i < entries.length - 1) output += '\n';
     }
   }
@@ -472,7 +472,7 @@ export function validateCSSVariableNames(tokens: TokenSet | EnhancedTokenSet, pr
  */
 function validateCategoryNames(
   category: string,
-  tokens: Record<string, any>,
+  tokens: Record<string, unknown>,
   prefix: string,
   errors: string[]
 ): void {

@@ -62,7 +62,7 @@ export interface StyleConversionOptions {
  * @param options - Conversion options
  * @returns CSS styles object
  */
-export function tokensToStyles(tokens: TokenSet, options?: StyleConversionOptions): Record<string, any> {
+export function tokensToStyles(tokens: TokenSet, options?: StyleConversionOptions): Record<string, unknown> {
   const opts: Required<StyleConversionOptions> = {
     componentType: options?.componentType || 'generic',
     additionalStyles: options?.additionalStyles || {},
@@ -71,7 +71,7 @@ export function tokensToStyles(tokens: TokenSet, options?: StyleConversionOption
     variablePrefix: options?.variablePrefix || 'ff',
  };
   
-  let styles: Record<string, any> = {};
+  let styles: Record<string, unknown> = {};
   
   // Apply base styles common to all components
   styles = {
@@ -128,8 +128,8 @@ export function tokensToStyles(tokens: TokenSet, options?: StyleConversionOption
  * @param prefix - CSS variable prefix
  * @returns Base CSS styles
  */
-function getBaseStyles(tokens: TokenSet, prefix: string): Record<string, any> {
-  const styles: Record<string, any> = {};
+function getBaseStyles(tokens: TokenSet, prefix: string): Record<string, unknown> {
+  const styles: Record<string, unknown> = {};
   
   // Apply background and text colors
   if (tokens.colors) {
@@ -177,8 +177,8 @@ function getBaseStyles(tokens: TokenSet, prefix: string): Record<string, any> {
  * @param prefix - CSS variable prefix
  * @returns Button CSS styles
  */
-function getButtonStyles(tokens: TokenSet, prefix: string): Record<string, any> {
-  const styles: Record<string, any> = {};
+function getButtonStyles(tokens: TokenSet, prefix: string): Record<string, unknown> {
+  const styles: Record<string, unknown> = {};
   
   // Apply button-specific background and text colors
   if (tokens.colors) {
@@ -234,8 +234,8 @@ function getButtonStyles(tokens: TokenSet, prefix: string): Record<string, any> 
  * @param prefix - CSS variable prefix
  * @returns Input CSS styles
  */
-function getInputStyles(tokens: TokenSet, prefix: string): Record<string, any> {
-  const styles: Record<string, any> = {};
+function getInputStyles(tokens: TokenSet, prefix: string): Record<string, unknown> {
+  const styles: Record<string, unknown> = {};
   
   // Apply input background and text colors
   if (tokens.colors) {
@@ -287,8 +287,8 @@ function getInputStyles(tokens: TokenSet, prefix: string): Record<string, any> {
  * @param prefix - CSS variable prefix
  * @returns Card CSS styles
  */
-function getCardStyles(tokens: TokenSet, prefix: string): Record<string, any> {
-  const styles: Record<string, any> = {};
+function getCardStyles(tokens: TokenSet, prefix: string): Record<string, unknown> {
+  const styles: Record<string, unknown> = {};
   
   // Apply card background and text colors
   if (tokens.colors) {
@@ -328,8 +328,8 @@ function getCardStyles(tokens: TokenSet, prefix: string): Record<string, any> {
  * @param prefix - CSS variable prefix
  * @returns Modal CSS styles
  */
-function getModalStyles(tokens: TokenSet, prefix: string): Record<string, any> {
-  const styles: Record<string, any> = {};
+function getModalStyles(tokens: TokenSet, prefix: string): Record<string, unknown> {
+  const styles: Record<string, unknown> = {};
   
   // Apply modal background and text colors
   if (tokens.colors) {
@@ -367,8 +367,8 @@ function getModalStyles(tokens: TokenSet, prefix: string): Record<string, any> {
  * @param prefix - CSS variable prefix
  * @returns Tooltip CSS styles
  */
-function getTooltipStyles(tokens: TokenSet, prefix: string): Record<string, any> {
-  const styles: Record<string, any> = {};
+function getTooltipStyles(tokens: TokenSet, prefix: string): Record<string, unknown> {
+  const styles: Record<string, unknown> = {};
   
   // Apply tooltip background and text colors
   if (tokens.colors) {
@@ -412,8 +412,8 @@ function getTooltipStyles(tokens: TokenSet, prefix: string): Record<string, any>
  * @param prefix - CSS variable prefix
  * @returns General component CSS styles
  */
-function getGeneralComponentStyles(tokens: TokenSet, componentType: ComponentTypeForStyle, prefix: string): Record<string, any> {
-  const styles: Record<string, any> = {};
+function getGeneralComponentStyles(tokens: TokenSet, componentType: ComponentTypeForStyle, prefix: string): Record<string, unknown> {
+  const styles: Record<string, unknown> = {};
   
   // Apply general spacing based on component type
   if (tokens.spacing) {
@@ -451,11 +451,11 @@ export function tokenToCSSValue(
   // Split the path by dots to navigate the object
   const pathParts = tokenPath.split('.');
   
-  let current: any = tokens;
+  let current: unknown = tokens;
   
   for (const part of pathParts) {
     if (current && typeof current === 'object') {
-      current = current[part];
+      current = (current as Record<string, unknown>)[part];
     } else {
       // If the token doesn't exist, return the fallback or a default value
       return fallback !== undefined ? fallback.toString() : '';
@@ -479,8 +479,8 @@ export function getResponsiveStyles(
   tokens: TokenSet,
   property: string,
   prefix: string = 'ff'
-): Record<string, any> {
-  const styles: Record<string, any> = {};
+): Record<string, unknown> {
+  const styles: Record<string, unknown> = {};
   
   // Apply base style
  if (tokens.spacing) {
@@ -517,16 +517,16 @@ export function getResponsiveStyles(
 export function createComponentStyles(
   componentType: ComponentTypeForStyle,
   tokens: TokenSet,
-  customStyles: Record<string, any> = {},
+  customStyles: Record<string, unknown> = {},
   prefix: string = 'ff'
-): Record<string, any> {
+): Record<string, unknown> {
   // Get base styles for the component
   const baseStyles = tokensToStyles(tokens, { componentType, variablePrefix: prefix });
   
   // Merge with custom styles
  return {
     ...baseStyles,
-    ...customStyles,
+    ...(customStyles as Record<string, unknown>),
   };
 }
 
