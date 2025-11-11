@@ -245,14 +245,15 @@ const TokenEditor: React.FC<TokenEditorProps> = ({
  /**
    * Filter tokens based on search query
    */
-  const filterTokens = (tokens: Record<string, any>, query: string): Record<string, any> => {
+  const filterTokens = (tokens: Record<string, unknown>, query: string): Record<string, unknown> => {
     if (!query) return tokens;
     
-    const filtered: Record<string, any> = {};
+  const filtered: Record<string, unknown> = {};
     const lowerQuery = query.toLowerCase();
     
     for (const [key, value] of Object.entries(tokens)) {
-      if (key.toLowerCase().includes(lowerQuery) || value.toString().toLowerCase().includes(lowerQuery)) {
+      const valStr = String(value).toLowerCase();
+      if (key.toLowerCase().includes(lowerQuery) || valStr.includes(lowerQuery)) {
         filtered[key] = value;
       }
     }
@@ -264,7 +265,7 @@ const TokenEditor: React.FC<TokenEditorProps> = ({
    * Render token inputs for a category
    */
  const renderTokenInputs = (category: TokenCategory) => {
-    let tokens: Record<string, any> | undefined;
+  let tokens: Record<string, unknown> | undefined;
     
     switch (category) {
       case 'colors':
@@ -295,7 +296,7 @@ const TokenEditor: React.FC<TokenEditorProps> = ({
     
     if (!tokens) return null;
     
-    const filteredTokens = filterTokens(tokens, state.searchQuery);
+  const filteredTokens = filterTokens(tokens, state.searchQuery);
     
     return (
       <div className="space-y-3">
@@ -304,11 +305,11 @@ const TokenEditor: React.FC<TokenEditorProps> = ({
           return (
             <div key={key} className="flex items-center justify-between p-2 hover:bg-surface rounded">
               <div className="flex items-center space-x-2">
-                {isColorValue(value.toString()) && (
+                {isColorValue(String(value)) && (
                   <div 
                     className="w-6 h-6 rounded border border-border" 
-                    style={{ backgroundColor: value.toString() }}
-                    title={value.toString()}
+                    style={{ backgroundColor: String(value) }}
+                    title={String(value)}
                   />
                 )}
                 <span className="text-sm font-mono">{key}</span>
@@ -346,13 +347,13 @@ const TokenEditor: React.FC<TokenEditorProps> = ({
                 <div className="flex items-center space-x-2">
                   <span 
                     className="px-2 py-1 text-sm bg-background border border-border rounded cursor-pointer max-w-xs truncate"
-                    onClick={() => startEditing(category, key, value)}
+                    onClick={() => startEditing(category, key, value as string | number)}
                     title={value.toString()}
                   >
-                    {value.toString()}
+                    {String(value)}
                   </span>
                   <button 
-                    onClick={() => startEditing(category, key, value)}
+                    onClick={() => startEditing(category, key, value as string | number)}
                     className="text-blue-600 hover:text-blue-800 text-sm"
                     title="Edit"
                   >

@@ -22,10 +22,12 @@ export const SettingsPanelComponent: React.FC<{
   onMouseEnter,
   onMouseLeave
 }) => {
-  const title = spec.props.title || 'Settings';
-  const backgroundColor = spec.props.backgroundColor || 'bg-surface';
-  const borderRadius = spec.props.borderRadius || 'rounded-lg';
-  const padding = spec.props.padding || 'p-6';
+  const props = spec.props as Record<string, unknown>;
+  const title = (props.title as string) || 'Settings';
+  const backgroundColor = (props.backgroundColor as string) || 'bg-surface';
+  const borderRadius = (props.borderRadius as string) || 'rounded-lg';
+  const padding = (props.padding as string) || 'p-6';
+  const description = (props.description as string) || undefined;
 
   return (
     <div
@@ -42,8 +44,8 @@ export const SettingsPanelComponent: React.FC<{
       {/* Panel Header */}
       <div className="mb-6">
         <h3 className="text-lg font-bold text-text">{title}</h3>
-        {spec.props.description && (
-          <p className="text-sm text-secondary mt-1">{spec.props.description}</p>
+        {description && (
+          <p className="text-sm text-secondary mt-1">{description}</p>
         )}
       </div>
 
@@ -63,7 +65,7 @@ export const SettingsPanelComponent: React.FC<{
       </div>
 
       {/* Panel Footer */}
-      {spec.props.showFooter && (
+  {(props.showFooter as boolean) && (
         <div className="mt-6 pt-4 border-t border-border">
           <div className="flex justify-end space-x-3">
             <button className="px-4 py-2 text-sm text-secondary hover:text-text transition-colors">

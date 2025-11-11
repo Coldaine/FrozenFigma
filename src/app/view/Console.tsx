@@ -315,7 +315,7 @@ const Console: React.FC = () => {
         </form>
         
         <div className="mt-2 flex items-center justify-between text-xs text-secondary">
-          <span>💡 Try: "Add a button", "Create 3 sliders", "Make a modal"</span>
+          <span>💡 Try: &quot;Add a button&quot;, &quot;Create 3 sliders&quot;, &quot;Make a modal&quot;</span>
           <span>{commandHistory.length} command{commandHistory.length !== 1 ? 's' : ''} in history</span>
         </div>
       </div>

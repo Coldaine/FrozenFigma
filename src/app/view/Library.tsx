@@ -10,7 +10,7 @@ interface SkeletonTemplate {
   label: string;
   description: string;
   icon: string;
-  defaultProps: Record<string, any>;
+  defaultProps: Record<string, unknown>;
   defaultSize: { w: number; h: number };
 }
 
