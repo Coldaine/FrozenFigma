@@ -57,7 +57,16 @@ export async function saveUI(graph: Graph, path: string = './ui.json'): Promise<
     const jsonContent = JSON.stringify(graphToSave, null, 2);
     
     // In a browser environment, we'll need to use a different approach for file saving
-    // For now, we'll simulate saving by logging and using localStorage for demo purposes
+    // Here we'll store the graph in localStorage using a path-specific key to support tests
+    if (typeof window !== 'undefined') {
+      try {
+        // Store in a path-specific key
+        const localKey = `frozenfigma-ui:${path}`;
+        localStorage.setItem(localKey, jsonContent);
+      } catch (err) {
+        // If localStorage fails or exceeds quota, fallback to a downloadable blob
+      }
+    }
     if (typeof window !== 'undefined' && window.Blob && window.URL) {
       // Browser environment - create a downloadable file
       const blob = new Blob([jsonContent], { type: 'application/json' });
@@ -67,11 +76,19 @@ export async function saveUI(graph: Graph, path: string = './ui.json'): Promise<
       const a = document.createElement('a');
       a.href = url;
       a.download = path.split('/').pop() || 'ui.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      try {
+        if (document.body && typeof document.body.appendChild === 'function') {
+          document.body.appendChild(a as any);
+        }
+        a.click();
+        if (document.body && typeof document.body.removeChild === 'function') {
+          try { document.body.removeChild(a as any); } catch (e) { /* ignore */ }
+        }
+      } catch (err) {
+        try { (a as any).click && (a as any).click(); } catch (ignore) {}
+      }
       window.URL.revokeObjectURL(url);
-    } else {
+  } else {
       // Node.js environment or fallback - this would need fs module in actual implementation
       console.log(`Saving UI to ${path}:`, jsonContent.substring(0, 100) + '...');
     }
@@ -93,8 +110,13 @@ export async function loadUI(path: string = './ui.json'): Promise<Graph> {
     
     if (typeof window !== 'undefined') {
       // Browser environment - try to load from localStorage first, or fetch from path
-      if (path === './ui.json') {
-        // Try to load from localStorage (the current state)
+      // First check for path-specific key
+      const localKey = `frozenfigma-ui:${path}`;
+      const savedUI = localStorage.getItem(localKey);
+      if (savedUI) {
+        graphData = JSON.parse(savedUI);
+      } else if (path === './ui.json') {
+        // Try to load from the primary application store
         const savedState = localStorage.getItem('frozenfigma-store');
         if (savedState) {
           const parsedState = JSON.parse(savedState);

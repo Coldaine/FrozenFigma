@@ -80,7 +80,7 @@ describe('Schema Validation', () => {
   describe('ComponentSpecSchema', () => {
     it('accepts valid component specs', () => {
       const validSpec = {
-        id: 'test-id-123',
+  id: '123e4567-e89b-12d3-a456-426614174000',
         type: 'button' as const,
         props: { label: 'Click me' },
         frame: {
@@ -120,7 +120,7 @@ describe('Schema Validation', () => {
         version: '1.0',
         nodes: [
           {
-            id: 'test-id-123',
+            id: '123e4567-e89b-12d3-a456-426614174000',
             type: 'button' as const,
             props: { label: 'Test' },
             frame: {
@@ -136,7 +136,7 @@ describe('Schema Validation', () => {
         tokens: {
           colors: { primary: '#000000' },
           spacing: { '4': 16 },
-          typography: { fontFamily: 'Arial' },
+          typography: { fontFamily: 'Arial', sizes: { sm: 12, md: 16 }, weights: { normal: 400, bold: 700 } },
           radius: { '4': 4 },
           shadows: { sm: '0 1px 2px rgba(0,0,0,0.1)' },
           transitions: { fast: '150ms ease-in-out' }
@@ -144,7 +144,8 @@ describe('Schema Validation', () => {
         meta: {
           created: new Date().toISOString(),
           modified: new Date().toISOString(),
-          title: 'Test Graph'
+          author: 'Test User',
+          description: 'Test Graph'
         }
       };
 
@@ -162,10 +163,10 @@ describe('Schema Validation', () => {
   describe('CommandSchema', () => {
     it('accepts valid ADD commands', () => {
       const validCommand = {
+        id: '123e4567-e89b-12d3-a456-426614174003',
         type: 'ADD' as const,
-        target: 'node',
-        spec: {
-          id: 'test-id-123',
+        component: {
+          id: '123e4567-e89b-12d3-a456-426614174000',
           type: 'button' as const,
           props: { label: 'Test' },
           frame: {
@@ -184,10 +185,10 @@ describe('Schema Validation', () => {
 
     it('accepts valid UPDATE commands', () => {
       const validCommand = {
+        id: '123e4567-e89b-12d3-a456-426614174004',
         type: 'UPDATE' as const,
-        target: 'node',
-        id: 'test-id-123',
-        changes: {
+        targetId: '123e4567-e89b-12d3-a456-426614174000',
+        updates: {
           props: { label: 'Updated Label' }
         }
       };

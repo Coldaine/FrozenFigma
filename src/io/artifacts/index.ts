@@ -119,11 +119,11 @@ export async function saveScreenshotArtifact(
     const uniquePath = await createUniqueFileName(artifact.metadata.path, fm);
     artifact.metadata.path = uniquePath;
     
-    await fm.writeFile(uniquePath, screenshot);
+  await fm.writeFile(uniquePath, screenshot, { overwrite: true });
     
     // Also save metadata as a separate JSON file for reference
     const metadataPath = uniquePath.replace(/\.[^/.]+$/, '.json');
-    await fm.writeFile(metadataPath, JSON.stringify(artifact.metadata, null, 2));
+  await fm.writeFile(metadataPath, JSON.stringify(artifact.metadata, null, 2), { overwrite: true });
     
     return artifact.metadata;
   } catch (error) {
@@ -322,7 +322,7 @@ export async function saveDiffArtifact(
     const uniquePath = await createUniqueFileName(artifact.metadata.path, fm);
     artifact.metadata.path = uniquePath;
     
-    await fm.writeFile(uniquePath, JSON.stringify(diff, null, 2));
+  await fm.writeFile(uniquePath, JSON.stringify(diff, null, 2), { overwrite: true });
     
     return artifact.metadata;
   } catch (error) {
@@ -385,11 +385,11 @@ export async function saveArtifact(
     
     // Serialize content if it's an object
     const contentToSave = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
-    await fm.writeFile(uniquePath, contentToSave);
+  await fm.writeFile(uniquePath, contentToSave, { overwrite: true });
     
     // Save metadata as well
     const metadataPath = uniquePath.replace(/\.[^/.]+$/, '.json');
-    await fm.writeFile(metadataPath, JSON.stringify(artifact.metadata, null, 2));
+  await fm.writeFile(metadataPath, JSON.stringify(artifact.metadata, null, 2), { overwrite: true });
     
     return artifact.metadata;
   } catch (error) {
