@@ -293,6 +293,7 @@ describe('Enhanced Repair System', () => {
       
       // Create a validation function that always fails
       const failingValidate = (_g: Graph): Diagnostic[] => {
+        void _g;
         return [{
           gate: 'schema',
           severity: 'error',

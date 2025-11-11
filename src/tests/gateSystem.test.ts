@@ -149,7 +149,7 @@ describe('Gate System Tests', () => {
         frame: { x: 10, y: 100, w: 120, h: 40, region: 'main' },
         props: 'invalid-props' // Should be an object, not a string
       };
-      // @ts-ignore - intentionally invalid structure for testing
+  // @ts-expect-error - intentionally invalid structure for testing
       graph.nodes.push(invalidComponent);
       
       const result = runTypeCheck(graph);

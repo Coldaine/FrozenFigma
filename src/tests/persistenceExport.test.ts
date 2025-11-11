@@ -29,7 +29,9 @@ Object.defineProperty(window, 'localStorage', {
 // Mock canvas and DOM elements
 Object.defineProperty(window, 'Blob', {
   value: class Blob {
-    constructor(_blobParts?: BlobPart[], _options?: BlobPropertyBag) {}
+    constructor(_blobParts?: BlobPart[], _options?: BlobPropertyBag) {
+      void _blobParts; void _options;
+    }
   },
   writable: true,
 });
