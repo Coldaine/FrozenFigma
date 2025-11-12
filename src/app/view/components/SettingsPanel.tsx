@@ -1,6 +1,6 @@
 import React from 'react';
 import { ComponentSpec } from '../../../schema';
-import { renderComponent } from './UIComponents';
+import { renderComponent } from './renderComponent';
 
 /**
  * SettingsPanel component - Renders a complete settings panel with sliders, toggles, and other controls

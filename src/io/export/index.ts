@@ -123,7 +123,7 @@ export function generateTSX(component: ComponentSpec, tokens?: TokenSet): string
 
 interface ${componentName}Props {
   // Add your props here based on the component specification
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const ${componentName}: React.FC<${componentName}Props> = (props) => {

@@ -112,7 +112,7 @@ const validTestTokens: TokenSet = {
 /**
  * Test token set with invalid values
  */
-const invalidTestTokens: any = {
+const invalidTestTokens: Record<string, unknown> = {
   colors: {
     primary: 'invalid-color', // Invalid color format
     secondary: 123, // Invalid type
@@ -528,13 +528,13 @@ describe('Edge Cases', () => {
   });
 
   it('should handle undefined tokens gracefully', () => {
-    const result = validateTokens(undefined as any);
+    const result = validateTokens(undefined);
     expect(result.success).toBe(false);
     expect(result.errors).toBeDefined();
   });
 
   it('should handle null tokens gracefully', () => {
-    const result = validateTokens(null as any);
+    const result = validateTokens(null);
     expect(result.success).toBe(false);
     expect(result.errors).toBeDefined();
   });

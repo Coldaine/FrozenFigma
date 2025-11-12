@@ -219,7 +219,7 @@ describe('Enhanced Repair System', () => {
         props: { text: 'Button' },
       });
       // Manually add an invalid property that has no repair strategy
-      (node as any).invalidProperty = 'invalid';
+      (node as Record<string, unknown>).invalidProperty = 'invalid';
       graph.nodes.push(node);
       
       // Use a synchronous validation function for the repair loop
@@ -229,7 +229,7 @@ describe('Enhanced Repair System', () => {
         
         // Check for any issues we want to test
         for (const node of g.nodes) {
-          if ((node as any).invalidProperty) {
+          if ((node as Record<string, unknown>).invalidProperty) {
             diagnostics.push({
               gate: 'schema',
               severity: 'error',
