@@ -1,3 +1,4 @@
+// Skeleton generator parameters are defined below
 import { ComponentSpec, ComponentType, createComponent, generateId } from '../../schema';
 
 /**
@@ -6,15 +7,20 @@ import { ComponentSpec, ComponentType, createComponent, generateId } from '../..
 export interface SkeletonParams {
   region?: string;
   x?: number;
+  w?: number;
+  h?: number;
+  sliderCount?: number;
+  toggleCount?: number;
   y?: number;
   title?: string;
   labels?: string[];
   count?: number;
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
   size?: 'small' | 'medium' | 'large' | 'responsive';
   theme?: 'light' | 'dark' | 'auto';
   locale?: string;
   variant?: string;
+  [key: string]: unknown;
 }
 
 /**
@@ -444,7 +450,7 @@ export function generateModal(params: SkeletonParams & {
         title,
         visible: true,
         closable: true,
-        ...props,
+  ...(props ?? {}),
       },
     }
   ));
@@ -649,7 +655,7 @@ export function generateTray(params: SkeletonParams & {
         title,
         visible: true,
         position,
-        ...props,
+  ...(props ?? {}),
       },
     }
   ));
@@ -2665,7 +2671,7 @@ export function generateLayout(params: SkeletonParams & {
  */
 export function generateSkeleton(
   type: string, 
-  params?: Record<string, any>
+  params?: SkeletonParams
 ): ComponentSpec[] {
   const normalizedType = type.toLowerCase().replace(/[-_\s]/g, '');
 
@@ -2728,7 +2734,7 @@ export function generateSkeleton(
     case 'container':
       return generateLayout(params);
     
-    default:
+    default: {
       console.warn(`Unknown skeleton type: ${type}`);
       // Fallback: return a single component based on the type if it matches a ComponentType
       const componentType = type as ComponentType;
@@ -2742,8 +2748,9 @@ export function generateSkeleton(
           region: params?.region || 'main',
         },
         {
-          props: params?.props || {},
+          props: (params?.props ?? {}) as Record<string, unknown>,
         }
       )];
+    }
   }
 }

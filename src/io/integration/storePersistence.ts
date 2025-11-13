@@ -268,7 +268,8 @@ export class StorePersistence {
   /**
    * Handles save errors, potentially attempting recovery.
    */
-  private async handleSaveError(error: any, _path?: string): Promise<void> {
+  private async handleSaveError(error: unknown, _path?: string): Promise<void> {
+    void _path;
     if (this.options.enableRecovery) {
       console.log('Attempting recovery from save error...');
       // In a real implementation, we might try to save to a backup location
@@ -283,7 +284,8 @@ export class StorePersistence {
   /**
    * Handles load errors, potentially attempting recovery.
    */
- private async handleLoadError(error: any, _path?: string): Promise<void> {
+ private async handleLoadError(error: unknown, _path?: string): Promise<void> {
+   void _path;
     if (this.options.enableRecovery) {
       console.log('Attempting recovery from load error...');
       
@@ -314,7 +316,7 @@ export class StorePersistence {
   /**
    * Logs a turn to the session log.
    */
-  public async logTurn(turnData: any, turnNumber?: number, description?: string): Promise<void> {
+  public async logTurn(turnData: unknown, turnNumber?: number, description?: string): Promise<void> {
     try {
       await logTurn(turnData, turnNumber, description);
     } catch (error) {

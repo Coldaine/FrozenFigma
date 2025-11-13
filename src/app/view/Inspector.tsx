@@ -3,6 +3,43 @@ import { useStore } from '../state/store';
 import { ComponentSpec } from '../../schema';
 
 /**
+ * JsonEditor component - Renders a JSON editor for editing component properties
+ */
+const JsonEditor: React.FC<{
+  component: ComponentSpec;
+  onSave: (id: string, jsonText: string) => void;
+  error?: string | null;
+}> = ({ component, onSave, error }) => {
+  const [jsonText, setJsonText] = useState(JSON.stringify(component, null, 2));
+
+  return (
+    <div className="space-y-2">
+      <textarea
+        value={jsonText}
+        onChange={(e) => {
+          setJsonText(e.target.value);
+          // Clear error when user starts typing
+        }}
+        className="w-full h-96 px-3 py-2 bg-background border border-border rounded-md text-sm font-mono text-text"
+      />
+
+      {error && (
+        <div className="px-3 py-2 bg-red-500/10 border border-red-500/50 rounded-md text-sm text-red-600">
+          {error}
+        </div>
+      )}
+
+      <button
+        onClick={() => onSave(component.id, jsonText)}
+        className="w-full px-4 py-2 bg-primary text-white rounded-md hover:opacity-90 text-sm font-medium"
+      >
+        Apply Changes
+      </button>
+    </div>
+  );
+};
+
+/**
  * Inspector component - Shows properties of selected components and allows editing.
  * 
  * Features:
@@ -27,7 +64,7 @@ const Inspector: React.FC = () => {
   const handlePropertyChange = useCallback((
     componentId: string,
     propPath: string,
-    value: any
+    value: unknown
   ) => {
     const component = selectors.getComponentById(componentId);
     if (!component) return;
@@ -234,39 +271,6 @@ const Inspector: React.FC = () => {
     );
   };
 
-  /**
-   * Render JSON editor for a single component
-   */
-  const renderJsonEditor = (component: ComponentSpec) => {
-    const [jsonText, setJsonText] = useState(JSON.stringify(component, null, 2));
-
-    return (
-      <div className="space-y-2">
-        <textarea
-          value={jsonText}
-          onChange={(e) => {
-            setJsonText(e.target.value);
-            setJsonError(null);
-          }}
-          className="w-full h-96 px-3 py-2 bg-background border border-border rounded-md text-sm font-mono text-text"
-        />
-        
-        {jsonError && (
-          <div className="px-3 py-2 bg-red-500/10 border border-red-500/50 rounded-md text-sm text-red-600">
-            {jsonError}
-          </div>
-        )}
-
-        <button
-          onClick={() => handleJsonSave(component.id, jsonText)}
-          className="w-full px-4 py-2 bg-primary text-white rounded-md hover:opacity-90 text-sm font-medium"
-        >
-          Apply Changes
-        </button>
-      </div>
-    );
-  };
-
   return (
     <div className="inspector-container h-full flex flex-col bg-surface border-l border-border">
       {/* Header */}
@@ -352,7 +356,13 @@ const Inspector: React.FC = () => {
             {/* Editor */}
             {viewMode === 'form'
               ? renderPropertyEditor(selectedComponents[0])
-              : renderJsonEditor(selectedComponents[0])}
+              : (
+                <JsonEditor
+                  component={selectedComponents[0]}
+                  onSave={handleJsonSave}
+                  error={jsonError}
+                />
+              )}
           </div>
         )}
       </div>

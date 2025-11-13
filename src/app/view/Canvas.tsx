@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useStore } from '../state/store';
-import { renderComponent } from './components/UIComponents';
+import { renderComponent } from './components/renderComponent';
 import { ComponentSpec } from '../../schema';
 
 /**

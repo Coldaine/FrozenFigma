@@ -151,10 +151,10 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
             <h2 style={{ fontFamily: tokens.typography?.fontFamily || 'system-ui' }}>Heading 2</h2>
             <h3 style={{ fontFamily: tokens.typography?.fontFamily || 'system-ui' }}>Heading 3</h3>
             <p style={{ fontFamily: tokens.typography?.fontFamily || 'system-ui' }}>
-              This is a paragraph with the theme's default font family. It demonstrates how text will appear with the selected theme.
+              This is a paragraph with the theme&apos;s default font family. It demonstrates how text will appear with the selected theme.
             </p>
             <small style={{ fontFamily: tokens.typography?.fontFamily || 'system-ui' }}>
-              This is small text to show the theme's smaller font size.
+              This is small text to show the theme&apos;s smaller font size.
             </small>
           </div>
         </div>

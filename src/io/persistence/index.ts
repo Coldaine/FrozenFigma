@@ -21,7 +21,7 @@ export interface Checkpoint {
 export interface SessionLogEntry {
   timestamp: string;
   type: 'prompt' | 'plan' | 'result' | 'checkpoint' | 'error';
-  data: any;
+  data: unknown;
   turn?: number;
 }
 
@@ -57,21 +57,38 @@ export async function saveUI(graph: Graph, path: string = './ui.json'): Promise<
     const jsonContent = JSON.stringify(graphToSave, null, 2);
     
     // In a browser environment, we'll need to use a different approach for file saving
-    // For now, we'll simulate saving by logging and using localStorage for demo purposes
+    // Here we'll store the graph in localStorage using a path-specific key to support tests
+    if (typeof window !== 'undefined') {
+      try {
+        // Store in a path-specific key
+        const localKey = `frozenfigma-ui:${path}`;
+        localStorage.setItem(localKey, jsonContent);
+      } catch (err) {
+        // If localStorage fails or exceeds quota, fallback to a downloadable blob
+      }
+    }
     if (typeof window !== 'undefined' && window.Blob && window.URL) {
       // Browser environment - create a downloadable file
       const blob = new Blob([jsonContent], { type: 'application/json' });
       const url = window.URL.createObjectURL(blob);
       
       // Create a temporary link to trigger download
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = path.split('/').pop() || 'ui.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      const anchor = document.createElement('a') as HTMLAnchorElement;
+      anchor.href = url;
+      anchor.download = path.split('/').pop() || 'ui.json';
+      try {
+        if (document.body && typeof document.body.appendChild === 'function') {
+          document.body.appendChild(anchor);
+        }
+        anchor.click();
+        if (document.body && typeof document.body.removeChild === 'function') {
+          try { document.body.removeChild(anchor); } catch (e) { /* ignore */ }
+        }
+      } catch (err) {
+        try { anchor.click && anchor.click(); } catch (ignore) { void ignore; }
+      }
       window.URL.revokeObjectURL(url);
-    } else {
+  } else {
       // Node.js environment or fallback - this would need fs module in actual implementation
       console.log(`Saving UI to ${path}:`, jsonContent.substring(0, 100) + '...');
     }
@@ -89,12 +106,17 @@ export async function saveUI(graph: Graph, path: string = './ui.json'): Promise<
  */
 export async function loadUI(path: string = './ui.json'): Promise<Graph> {
   try {
-    let graphData: any;
+  let graphData: unknown;
     
     if (typeof window !== 'undefined') {
       // Browser environment - try to load from localStorage first, or fetch from path
-      if (path === './ui.json') {
-        // Try to load from localStorage (the current state)
+      // First check for path-specific key
+      const localKey = `frozenfigma-ui:${path}`;
+      const savedUI = localStorage.getItem(localKey);
+      if (savedUI) {
+        graphData = JSON.parse(savedUI);
+      } else if (path === './ui.json') {
+        // Try to load from the primary application store
         const savedState = localStorage.getItem('frozenfigma-store');
         if (savedState) {
           const parsedState = JSON.parse(savedState);
@@ -349,7 +371,7 @@ export async function createProject(projectName: string): Promise<void> {
  * @param projectName - Name of the project
  * @returns Promise that resolves to the project structure
  */
-export async function getProject(projectName: string): Promise<any> {
+export async function getProject(projectName: string): Promise<Record<string, unknown> | null> {
   try {
     const projectKey = `frozenfigma-project-${projectName}`;
     const projectStructure = localStorage.getItem(projectKey);
@@ -358,7 +380,7 @@ export async function getProject(projectName: string): Promise<any> {
       throw new Error(`Project ${projectName} not found`);
     }
     
-    return JSON.parse(projectStructure);
+  return JSON.parse(projectStructure) as Record<string, unknown>;
   } catch (error) {
     console.error(`Error getting project ${projectName}:`, error);
     return null;

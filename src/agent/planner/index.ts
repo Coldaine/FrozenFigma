@@ -9,6 +9,7 @@ import {
   createMoveCommand,
   createComponent,
 } from '../../schema';
+import { generateSettingsPanel } from '../skeletons';
 
 /**
  * Intent represents the parsed user's goal from a natural language prompt.
@@ -18,7 +19,7 @@ interface Intent {
   componentType?: ComponentType;
   targetId?: string;
   targetName?: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
   position?: { x: number; y: number; region?: string };
   count?: number;
   description: string;
@@ -38,8 +39,8 @@ const PATTERNS = {
   
   // Component types
   button: /\bbutton\b/i,
-  slider: /\bslider\b/i,
-  toggle: /\btoggle\b/i,
+  slider: /\bslider(?:s)?\b/i,
+  toggle: /\btoggle(?:s)?\b/i,
   tabs: /\btabs?\b/i,
   modal: /\bmodal\b/i,
   tray: /\btray\b/i,
@@ -54,6 +55,11 @@ const PATTERNS = {
   popover: /\bpopover\b/i,
   drawer: /\bdrawer\b/i,
   dialog: /\bdialog\b/i,
+  
+  // Special patterns
+  settings: /\bsettings?\b/i,
+  sliders: /\bslider(?:s)?\b/i,
+  toggles: /\btoggle(?:s)?\b/i,
   
   // Numbers and quantities
   number: /\b(\d+)\b/,
@@ -114,7 +120,22 @@ function extractIntent(prompt: string): Intent {
   const region = regionMatch ? regionMatch[1].toLowerCase() : 'main';
   
   // Extract properties from prompt (simplified for now)
-  const properties: Record<string, any> = {};
+  const properties: Record<string, unknown> = {};
+  
+  // Special case: settings panel properties
+  if (componentType === 'settings-panel') {
+    // Extract slider count
+    const sliderMatch = prompt.match(/(\d+)\s*slider/i);
+    if (sliderMatch) {
+      properties.sliderCount = parseInt(sliderMatch[1], 10);
+    }
+    
+    // Extract toggle count
+    const toggleMatch = prompt.match(/(\d+)\s*toggle/i);
+    if (toggleMatch) {
+      properties.toggleCount = parseInt(toggleMatch[1], 10);
+    }
+  }
   
   // Look for label/text patterns
   const labelMatch = prompt.match(/(?:labeled?|titled?|text)\s+["']([^"']+)["']/i);
@@ -161,29 +182,58 @@ function intentToCommands(intent: Intent): Command[] {
       
       const count = intent.count || 1;
       
-      // Generate multiple components if count > 1
-      for (let i = 0; i < count; i++) {
-        const component = createComponent(
-          intent.componentType,
-          {
-            x: intent.position!.x + (i * 120), // Offset each component
-            y: intent.position!.y,
-            w: getDefaultWidth(intent.componentType),
-            h: getDefaultHeight(intent.componentType),
-            region: intent.position!.region || 'main',
-          },
-          {
-            props: {
-              ...intent.properties,
-              // Add default label if count > 1
-              ...(count > 1 && intent.properties?.label ? {
-                label: `${intent.properties.label} ${i + 1}`,
-              } : {}),
-            },
-          }
-        );
+      // Special case: settings panel
+      if (intent.componentType === 'settings-panel') {
+        const sliderCount = (() => {
+          const v = intent.properties?.sliderCount;
+          if (typeof v === 'number') return v;
+          if (typeof v === 'string') return parseInt(v, 10);
+          return 3;
+        })();
+        const toggleCount = (() => {
+          const v = intent.properties?.toggleCount;
+          if (typeof v === 'number') return v;
+          if (typeof v === 'string') return parseInt(v, 10);
+          return 2;
+        })();
         
-        commands.push(createAddCommand(component));
+        const settingsComponents = generateSettingsPanel({
+          sliderCount,
+          toggleCount,
+          region: intent.position!.region || 'sidebar',
+          x: intent.position!.x,
+          y: intent.position!.y,
+        });
+        
+        // Add all components from the settings panel
+        for (const component of settingsComponents) {
+          commands.push(createAddCommand(component));
+        }
+      } else {
+        // Generate multiple components if count > 1
+        for (let i = 0; i < count; i++) {
+          const component = createComponent(
+            intent.componentType,
+            {
+              x: intent.position!.x + (i * 120), // Offset each component
+              y: intent.position!.y,
+              w: getDefaultWidth(intent.componentType),
+              h: getDefaultHeight(intent.componentType),
+              region: intent.position!.region || 'main',
+            },
+            {
+              props: {
+                ...intent.properties,
+                // Add default label if count > 1
+                ...(count > 1 && intent.properties?.label ? {
+                  label: `${intent.properties.label} ${i + 1}`,
+                } : {}),
+              },
+            }
+          );
+          
+          commands.push(createAddCommand(component));
+        }
       }
       break;
     }

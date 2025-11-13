@@ -26,6 +26,7 @@ export const ComponentTypeSchema = z.enum([
   'popover',
   'drawer',
   'dialog',
+  'settings-panel',
 ]);
 
 export type ComponentType = z.infer<typeof ComponentTypeSchema>;
@@ -61,7 +62,7 @@ export const ComponentSpecSchema = z.object({
   id: z.string().uuid().describe('Unique component identifier'),
   type: ComponentTypeSchema,
   name: z.string().optional().describe('Human-readable name for addressing'),
-  props: z.record(z.any()).default({}).describe('Component-specific properties'),
+  props: z.record(z.unknown()).default({}).describe('Component-specific properties'),
   frame: FrameSchema,
   children: z.array(z.string().uuid()).optional().describe('Child component IDs'),
 });
@@ -744,7 +745,7 @@ export function createComponent(
   frame: Frame,
   options?: {
     name?: string;
-    props?: Record<string, any>;
+    props?: Record<string, unknown>;
     children?: string[];
   }
 ): ComponentSpec {

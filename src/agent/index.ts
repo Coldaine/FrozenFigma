@@ -26,7 +26,7 @@ export interface AgentResult {
       rollbackCount: number;
     };
  };
-  diagnostics?: any[];
+  diagnostics?: Diagnostic[];
   validation?: ValidationGateResult;
 }
 

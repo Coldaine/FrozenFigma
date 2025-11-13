@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useStore } from '../state/store';
+import { createComponent, generateId } from '../../schema';
 
 /**
  * Command action definition
@@ -45,7 +46,6 @@ const CommandBar: React.FC = () => {
       icon: '🔘',
       category: 'component',
       action: () => {
-        const { createComponent, generateId } = require('../../schema');
         const component = createComponent('button', {
           x: 100, y: 100, w: 120, h: 40, region: 'center'
         }, { props: { label: 'Button' }, name: `button-${generateId().slice(0, 4)}` });
@@ -60,7 +60,6 @@ const CommandBar: React.FC = () => {
       icon: '🃏',
       category: 'component',
       action: () => {
-        const { createComponent, generateId } = require('../../schema');
         const component = createComponent('card', {
           x: 100, y: 100, w: 300, h: 200, region: 'center'
         }, { props: { title: 'Card Title', description: 'Card description' }, name: `card-${generateId().slice(0, 4)}` });
@@ -75,7 +74,6 @@ const CommandBar: React.FC = () => {
       icon: '📦',
       category: 'component',
       action: () => {
-        const { createComponent, generateId } = require('../../schema');
         const component = createComponent('modal', {
           x: 200, y: 100, w: 400, h: 300, region: 'overlay'
         }, { props: { title: 'Modal', content: 'Modal content', open: true }, name: `modal-${generateId().slice(0, 4)}` });
@@ -292,7 +290,7 @@ const CommandBar: React.FC = () => {
           <div className="max-h-96 overflow-y-auto">
             {filteredCommands.length === 0 ? (
               <div className="p-8 text-center text-secondary">
-                No commands found for "{searchQuery}"
+                No commands found for &quot;{searchQuery}&quot;
               </div>
             ) : (
               <div className="py-2">

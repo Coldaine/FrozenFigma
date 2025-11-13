@@ -233,7 +233,7 @@ const Console: React.FC = () => {
           {/* Filter buttons */}
           <select
             value={filterType}
-            onChange={(e) => setFilterType(e.target.value as any)}
+            onChange={(e) => setFilterType(e.target.value as 'all' | 'info' | 'success' | 'error' | 'command')}
             className="px-2 py-1 text-xs bg-background border border-border rounded-md text-text"
           >
             <option value="all">All</option>
@@ -315,7 +315,7 @@ const Console: React.FC = () => {
         </form>
         
         <div className="mt-2 flex items-center justify-between text-xs text-secondary">
-          <span>💡 Try: "Add a button", "Create 3 sliders", "Make a modal"</span>
+          <span>💡 Try: &quot;Add a button&quot;, &quot;Create 3 sliders&quot;, &quot;Make a modal&quot;</span>
           <span>{commandHistory.length} command{commandHistory.length !== 1 ? 's' : ''} in history</span>
         </div>
       </div>

@@ -105,6 +105,7 @@ export class BrowserFileManager implements FileManager {
    * @returns Promise that resolves to the file content
    */
   async readFile(path: string, _options?: FileOperationOptions): Promise<string> {
+    void _options;
     // In browser, we'll use localStorage to simulate file system
     const key = this.getPathKey(path);
     const content = localStorage.getItem(key);
@@ -161,6 +162,7 @@ export class BrowserFileManager implements FileManager {
    * @returns Promise that resolves when the directory is created
    */
   async mkdir(path: string, _options?: FileOperationOptions): Promise<void> {
+    void _options;
     // In browser storage, we simulate directories by creating a marker
     const dirKey = this.getPathKey(path) + '/__dir_marker__';
     localStorage.setItem(dirKey, 'directory');
@@ -263,6 +265,7 @@ export class SimulatedNodeFileManager implements FileManager {
   }
 
   async readFile(path: string, _options?: FileOperationOptions): Promise<string> {
+    void _options;
     const normalizedPath = this.normalizePath(path);
     
     if (!this.fileStorage.has(normalizedPath)) {

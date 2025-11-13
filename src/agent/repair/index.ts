@@ -1,4 +1,4 @@
-import { Graph } from '../../schema';
+import { Graph, ComponentSpec } from '../../schema';
 import { Diagnostic } from '../validator';
 
 /**
@@ -48,7 +48,7 @@ export interface ClassifiedDiagnostic extends Diagnostic {
   /** The specific type of error for targeted repair */
   type: ErrorType;
   /** Additional context information for the diagnostic */
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 /**
@@ -101,7 +101,7 @@ export interface Checkpoint {
   /** Description of the state captured in this checkpoint */
   description: string;
   /** Additional metadata associated with this checkpoint */
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 /**
@@ -184,13 +184,13 @@ class RepairStrategyLibrary {
           const duplicateId = match[1];
           
           // Find all nodes with this ID
-          const duplicates = modifiedGraph.nodes.filter((n: any) => n.id === duplicateId);
+          const duplicates = modifiedGraph.nodes.filter((n: ComponentSpec) => n.id === duplicateId);
           
           if (duplicates.length > 1) {
             // Keep the first one, regenerate IDs for the rest
             for (let i = 1; i < duplicates.length; i++) {
               const newId = crypto.randomUUID();
-              const index = modifiedGraph.nodes.findIndex((n: any) => 
+              const index = modifiedGraph.nodes.findIndex((n: ComponentSpec) => 
                 n === duplicates[i]
               );
               
@@ -239,7 +239,7 @@ class RepairStrategyLibrary {
           const parentId = match[1];
           const childId = match[2];
           
-          const parent = modifiedGraph.nodes.find((n: any) => n.id === parentId);
+          const parent = modifiedGraph.nodes.find((n: ComponentSpec) => n.id === parentId);
           if (parent && parent.children) {
             // Remove the invalid child reference
             parent.children = parent.children.filter((id: string) => id !== childId);
@@ -275,7 +275,7 @@ class RepairStrategyLibrary {
           const coordinate = match[2];
           const value = parseFloat(match[3]);
           
-          const node = modifiedGraph.nodes.find((n: any) => n.id === componentId);
+          const node = modifiedGraph.nodes.find((n: ComponentSpec) => n.id === componentId);
           if (node) {
             // Clamp to reasonable bounds
             const clampedValue = Math.max(-1000, Math.min(1000, value));
@@ -534,7 +534,7 @@ export class TransactionManager {
    * @param metadata - Additional metadata to associate with the checkpoint
    * @returns The created checkpoint
    */
-  createCheckpoint(graph: Graph, description: string, metadata: Record<string, any> = {}): Checkpoint {
+  createCheckpoint(graph: Graph, description: string, metadata: Record<string, unknown> = {}): Checkpoint {
     const checkpoint: Checkpoint = {
       id: crypto.randomUUID(),
       timestamp: Date.now(),
@@ -814,7 +814,7 @@ class EnhancedRepairer {
     let currentGraph = graph;
     let currentDiagnostics = diagnostics;
     let attempt = 0;
-    let allFixes: string[] = [];
+    const allFixes: string[] = [];
     
     while (attempt < maxAttempts) {
       attempt++;
@@ -917,7 +917,7 @@ class EnhancedRepairer {
     }
     
     let currentGraph = graph;
-    let appliedFixes: string[] = [];
+    const appliedFixes: string[] = [];
     let rollbackSteps = 0;
     
     for (let i = 0; i < steps; i++) {
@@ -974,6 +974,7 @@ export function attemptRepair(
   diagnostics: Diagnostic[],
   _maxAttempts: number = 3
 ): RepairResult {
+  void _maxAttempts;
   return enhancedRepairer.attemptRepair(graph, diagnostics);
 }
 
